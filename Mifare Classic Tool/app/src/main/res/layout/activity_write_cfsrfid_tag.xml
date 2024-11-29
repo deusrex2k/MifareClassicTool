@@ -122,7 +122,7 @@
             android:ems="10"
             android:height="48dp"
             android:inputType="text"
-            android:text="01001" />
+            android:text="Name" />
 
         <TextView
             android:id="@+id/textView5"

@@ -38,7 +38,7 @@
         <activity
             android:name=".Activities.MainMenu"
             android:configChanges="orientation|screenSize"
-            android:label="@string/title_activity_main"
+            android:label="@string/title_activity_main_cfsrfid"
             android:exported="true"
             android:launchMode="singleTop" >
             <intent-filter>

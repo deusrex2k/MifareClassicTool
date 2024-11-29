@@ -27,6 +27,7 @@
 
     <!-- Activity titles -->
     <string name="title_activity_main">MIFARE Classic Tool</string>
+    <string name="title_activity_main_cfsrfid">Creality RFID Tool</string>
     <string name="title_activity_read_tag">Read Tag</string>
     <string name="title_activity_dump_editor">Dump Editor</string>
     <string name="title_activity_access_conditions">Access Conditions</string>
