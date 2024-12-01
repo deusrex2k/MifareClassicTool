@@ -24,7 +24,7 @@
         android:id="@+id/scrollViewCloneUidTool"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="de.syss.MifareClassicTool.Activities.CloneUidTool"
+        tools:context="com.lot38designs.cfsrfid.Activities.CloneUidTool"
         android:padding="5dp">
 
     <LinearLayout

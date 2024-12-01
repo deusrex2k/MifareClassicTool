@@ -5,10 +5,10 @@ plugins {
 
 android {
     compileSdk 34
-    namespace "de.syss.MifareClassicTool"
+    namespace "com.lot38designs.cfsrfid"
 
     defaultConfig {
-        applicationId "de.syss.MifareClassicTool"
+        applicationId "com.lot38designs.cfsrfid"
         minSdk 19
         targetSdk 34
         versionCode 68
@@ -36,4 +36,6 @@ dependencies {
     implementation "androidx.core:core:1.13.1"
     implementation "androidx.preference:preference:1.2.1"
     implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "com.github.skydoves:colorpickerview:2.3.0"
+
 }

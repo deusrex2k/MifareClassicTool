@@ -22,12 +22,12 @@
 <resources>
 
     <!-- Common stuff -->
-    <string name="app_name">MIFARE Classic Tool</string>
+    <string name="app_name">RFID Tool for Creality</string>
     <string name="app_version">App Version</string>
 
     <!-- Activity titles -->
     <string name="title_activity_main">MIFARE Classic Tool</string>
-    <string name="title_activity_main_cfsrfid">Creality RFID Tool</string>
+    <string name="title_activity_main_cfsrfid">RFID Tool for Creality</string>
     <string name="title_activity_read_tag">Read Tag</string>
     <string name="title_activity_dump_editor">Dump Editor</string>
     <string name="title_activity_access_conditions">Access Conditions</string>
@@ -50,6 +50,51 @@
     <string name="title_activity_import_export_tool">Import/Export Tool</string>
     <string name="title_activity_uid_log_tool">UID Log</string>
     <string name="title_activity_data_conversion_tool">Data Conversion Tool</string>
+
+    <!-- Filament Material Dropdown -->
+    <string-array name="materials_array">
+        <item>10001:HP-TPU</item>
+        <item>11001:CR-Nylon</item>
+        <item>13001:CR-PLACarbon</item>
+        <item>14001:CR-PLAMatte</item>
+        <item>15001:CR-PLAFluo</item>
+        <item>16001:CR-TPU</item>
+        <item>17001:CR-Wood</item>
+        <item>18001:HPUltraPLA</item>
+        <item>19001:HP-ASA</item>
+        <item>07001:CR-ABS</item>
+        <item>06001:CR-PETG</item>
+        <item>04001:CR-PLA</item>
+        <item>05001:CR-Silk</item>
+        <item>09001:EN-PLA+</item>
+        <item>09002:ENDERFASTPLA</item>
+        <item>08001:Ender-PLA</item>
+        <item>00004:GenericABS</item>
+        <item>00007:GenericASA</item>
+        <item>00010:GenericBVOH</item>
+        <item>00012:GenericHIPS</item>
+        <item>00008:GenericPA</item>
+        <item>00009:GenericPA-CF</item>
+        <item>00015:GenericPA6-CF</item>
+        <item>00016:GenericPAHT-CF</item>
+        <item>00021:GenericPC</item>
+        <item>00020:GenericPET</item>
+        <item>00013:GenericPET-CF</item>
+        <item>00003:GenericPETG</item>
+        <item>00014:GenericPETG-CF</item>
+        <item>00001:GenericPLA</item>
+        <item>00006:GenericPLA-CF</item>
+        <item>00002:GenericPLA-Silk</item>
+        <item>00019:GenericPP</item>
+        <item>00017:GenericPPS</item>
+        <item>00018:GenericPPS-CF</item>
+        <item>00011:GenericPVA</item>
+        <item>00005:GenericTPU</item>
+        <item>03001:HyperABS</item>
+        <item>06002:HyperPETG</item>
+        <item>01001:HyperPLA</item>
+        <item>02001:HyperPLA-CF</item>
+    </string-array>
 
     <!-- Texts (labels etc.) -->
     <string name="text_choose_key_files">Choose some key file(s):</string>
