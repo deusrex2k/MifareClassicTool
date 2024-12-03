@@ -30,7 +30,8 @@
     <LinearLayout
         android:id="@+id/linearLayoutCreateKeyMap"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/textViewCreateKeyMapSectorRange"
@@ -39,7 +40,8 @@
             android:paddingLeft="5dp"
             android:paddingRight="3dp"
             android:text="@string/text_sector_range"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/textViewCreateKeyMapFromTo"
@@ -48,7 +50,8 @@
             android:paddingRight="3dp"
             android:text="@string/text_sector_range_all"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="?attr/colorAccent" />
+            android:textColor="?attr/colorAccent"
+            android:visibility="invisible" />
 
         <Button
             android:id="@+id/buttonCreateKeyMapChangeRange"
@@ -57,7 +60,8 @@
             android:layout_height="wrap_content"
             android:minHeight="34dip"
             android:onClick="onChangeSectorRange"
-            android:text="@string/action_change" />
+            android:text="@string/action_change"
+            android:visibility="invisible" />
 
     </LinearLayout>
 
@@ -67,7 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/linearLayoutCreateKeyMap"
         android:paddingLeft="5dp"
-        android:text="@string/text_choose_key_files"
+        android:text="Place tag on phone and press Write button. \n\nNote: You can skip this screen by placing the tag while on the preious screen."
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Button
@@ -78,7 +82,8 @@
         android:layout_below="@id/textViewCreateKeyMapChooseKeyFile"
         android:minHeight="34dip"
         android:onClick="onSelectAll"
-        android:text="@string/action_select_all" />
+        android:text="@string/action_select_all"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/buttonCreateKeyMapSelectNone"
@@ -89,7 +94,8 @@
         android:layout_toRightOf="@id/buttonCreateKeyMapSelectAll"
         android:minHeight="34dip"
         android:onClick="onSelectNone"
-        android:text="@string/action_select_none" />
+        android:text="@string/action_select_none"
+        android:visibility="invisible" />
 
     <ScrollView
         android:id="@+id/scrollViewCreateKeyMap"
@@ -98,13 +104,14 @@
         android:layout_above="@+id/textViewCreateKeyMapProgess"
         android:layout_below="@id/buttonCreateKeyMapSelectAll"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true" >
+        android:layout_alignParentRight="true"
+        android:visibility="invisible">
 
         <LinearLayout
             android:id="@+id/linearLayoutCreateKeyMapKeyFiles"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
         </LinearLayout>
 
@@ -118,7 +125,8 @@
         android:layout_alignParentLeft="true"
         android:padding="5dp"
         android:text="@string/text_key_map_progress"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:visibility="invisible" />
 
     <ProgressBar
         android:id="@+id/progressBarCreateKeyMap"
@@ -127,9 +135,10 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/buttonCreateKeyMap"
         android:layout_toRightOf="@id/textViewCreateKeyMapProgess"
-        android:paddingBottom="5dp"
+        android:paddingTop="10dp"
         android:paddingRight="5dp"
-        android:paddingTop="10dp" />
+        android:paddingBottom="5dp"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/buttonCreateKeyMapCancel"
@@ -145,10 +154,10 @@
         android:id="@+id/buttonCreateKeyMap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         android:layout_toRightOf="@id/buttonCreateKeyMapCancel"
         android:onClick="onCreateKeyMap"
-        android:text="@string/action_create_key_map" />
+        android:text="Write" />
 
 </RelativeLayout>

@@ -22,16 +22,17 @@
 <resources>
 
     <!-- Common stuff -->
-    <string name="app_name">MIFARE Classic Tool</string>
+    <string name="app_name">RFID for CFS</string>
     <string name="app_version">Версия приложения</string>
 
     <!-- Activity titles -->
     <string name="title_activity_main">MIFARE Classic Tool</string>
+    <string name="title_activity_main_cfsrfid">RFID for CFS</string>
     <string name="title_activity_read_tag">Читать тег</string>
     <string name="title_activity_dump_editor">Редактор дампа</string>
     <string name="title_activity_access_conditions">Условия доступа</string>
     <string name="title_activity_write_tag">Запись метки</string>
-    <string name="title_activity_create_key_map">Ключи карты к секторам</string>
+    <string name="title_activity_create_key_map">Write Tag</string>
     <string name="title_activity_file_chooser">Выбор файла</string>
     <string name="title_activity_value_blocks">Блоки значений в виде целых чисел</string>
     <string name="title_activity_key_editor">Редактор ключей</string>
@@ -212,7 +213,7 @@
     <string name="action_change">Изменить</string>
     <string name="action_read_all_sectors">Читать все сектора</string>
     <string name="action_write_block">Записать блок</string>
-    <string name="action_create_key_map_and_write_block">Запись блока</string>
+    <string name="action_create_key_map_and_write_block">Write</string>
     <string name="action_create_key_map_and_write_dump">Запись дампа</string>
     <string name="action_create_key_map_and_factory_format">Чтение карты и формат тегов</string>
     <string name="action_create_key_map_and_write_value_block">Начать сопоставление и записать блок значений</string>
@@ -406,16 +407,7 @@
     <string name="dialog_new_file_title">Новый файл</string>
     <string name="dialog_new_file">Введите имя для нового файла:</string>
     <string name="dialog_first_run_title">ПРЕДУПРЕЖДЕНИЕ</string>
-    <string name="dialog_first_run">Это приложение посвящено
-         пользователям, имеющим хотя бы базовые знания о
-         технологии MIFARE Classic. Его функции являются базовыми и на низком уровне.
-         уровень. Поэтому почти все вводимые и выводимые данные будут шестнадцатеричными.
-         Также важно, чтобы вы понимали, что делаете, например. если
-         вы записываете данные в тег. Запись неверных данных в определенные
-         блоки могут нанести непоправимый ущерб метке.
-         \n\n<b>ДЛЯ ДОПОЛНИТЕЛЬНОЙ ИНФОРМАЦИИ И ПОМОЩИ ПРОСМОТРИТЕ
-         РАЗДЕЛ \"Помощь и информация\".</b>
-    </string>
+    <string name="dialog_first_run">This application has been written to work with Creality 3D Printers to be compatible with their RFID data format as we understand it. The Advanced mode will allow you to put just about any data on an RFID tag, and that data might negatively affect your printer.</string>
     <string name="dialog_write_issues_title">Проблемы с записью</string>
     <string name="dialog_write_issues">Были обнаружены проблемы, которые влияют на запись в тег.
         Ознакомьтесь со ВСЕМ списком ниже!</string>
@@ -512,15 +504,6 @@
     </string>
     <string name="dialog_save_conflict_keyfile">Этот файл уже существует. Что вы хотите сделать?</string>
     <string name="dialog_donate_title">Пожертвовать</string>
-    <string name="dialog_donate"><b>MIFARE Classic Tool был обновлен!</b>
-        \nВы можете найти полную версию
-        <a href="https://raw.github.com/ikarus23/MifareClassicTool/master/CHANGELOG.txt">изменений</a>
-        в интернете.
-        \n\nЕсли новые функции, исправления или приложение в целом вас порадовали,
-         пожалуйста, подумайте о том, чтобы порадовать разработчика. Купи ему пива! ;)
-        \n\n\u2022 <a href="market://details?id=de.syss.MifareClassicToolDonate">Донат-версия</a>
-        \n\u2022 <a href="https://github.com/ikarus23/MifareClassicTool/blob/master/README.md#mifare-classic-tool-mct">ссылка для пожертвований на GitHub</a>
-    </string>
     <string name="dialog_save_before_quitting_title">Несохраненные изменения</string>
     <string name="dialog_save_before_quitting"><b>Есть несохраненные изменения!</b>
          \nХотите сохранить эти изменения?

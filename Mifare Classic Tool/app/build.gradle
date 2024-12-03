@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.lot38designs.cfsrfid"
-        minSdk 19
+        minSdk 23
         targetSdk 34
         versionCode 68
         versionName '4.2.3'
@@ -37,5 +37,6 @@ dependencies {
     implementation "androidx.preference:preference:1.2.1"
     implementation "androidx.appcompat:appcompat:1.6.1"
     implementation "com.github.skydoves:colorpickerview:2.3.0"
+    implementation 'com.google.android.material:material:1.12.0'
 
 }

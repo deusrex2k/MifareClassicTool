@@ -22,16 +22,17 @@
 <resources>
 
     <!-- Common stuff -->
-    <string name="app_name">MIFARE Classic Tool</string>
+    <string name="app_name">RFID for CFS</string>
     <string name="app_version">Versión</string>
 
     <!-- Activity titles -->
     <string name="title_activity_main">MIFARE Classic Tool</string>
+    <string name="title_activity_main_cfsrfid">RFID for CFS</string>
     <string name="title_activity_read_tag">Leer etiqueta</string>
     <string name="title_activity_dump_editor">Editor de dumpeos</string>
     <string name="title_activity_access_conditions">Condiciones de acceso</string>
     <string name="title_activity_write_tag">Escribir etiqueta</string>
-    <string name="title_activity_create_key_map">Mapear claves a sectores</string>
+    <string name="title_activity_create_key_map">Write Tag</string>
     <string name="title_activity_file_chooser">Escoger archivos</string>
     <string name="title_activity_value_blocks">Valores de bloque como enteros</string>
     <string name="title_activity_key_editor">Editor de claves</string>
@@ -213,8 +214,7 @@
     <string name="action_change">Cambiar</string>
     <string name="action_read_all_sectors">Leer todos los sectores</string>
     <string name="action_write_block">Escribir bloque</string>
-    <string name="action_create_key_map_and_write_block">Comenzar mapeo y
-        escribir bloque</string>
+    <string name="action_create_key_map_and_write_block">Write</string>
     <string name="action_create_key_map_and_write_dump">Comenzar mapeo y
         escribir dumpeo</string>
     <string name="action_create_key_map_and_factory_format">Comenzar mapeo y
@@ -432,15 +432,7 @@
     <string name="dialog_new_file_title">Nuevo archivo:</string>
     <string name="dialog_new_file">Introduce un nombre para el nuevo archivo:</string>
     <string name="dialog_first_run_title">ADVERTENCIA</string>
-    <string name="dialog_first_run">Esta aplicación está dedicada
-        a usuarios que tengan al menos una familiaridad básica con la
-        tecnología MIFARE Classic. Sus funcionalidades son básicas y
-        a bajo nivel. Por otra parte casi todos los datos de entrada y salida
-        serán en hexadecimal. Es importante que entiendas lo que estás haciendo,
-        e.j. si escribes datos en una etiqueta. Escribir datos erróneos en ciertos
-        bloques puede causar daños irreparables a la etiqueta.
-        \n\n<b>PARA MÁS INFORMACIÓN Y AYUDA MIRA LA SECCIÓN
-        \"Ayuda e info\".</b></string>
+    <string name="dialog_first_run">This application has been written to work with Creality 3D Printers to be compatible with their RFID data format as we understand it. The Advanced mode will allow you to put just about any data on an RFID tag, and that data might negatively affect your printer.</string>
     <string name="dialog_tools_menu_title">Herramientas disponibles</string>
     <string name="dialog_wait_write_tag_title">Escribiendo…</string>
     <string name="dialog_wait_write_tag">Escribiendo etiqueta…\n(No quites
@@ -524,14 +516,6 @@
     <string name="dialog_save_conflict_keyfile">Este fichero ya existe.
         ¿Que es lo que quieres hacer?</string>
     <string name="dialog_donate_title">Donar</string>
-    <string name="dialog_donate">
-        <b>¡MIFARE Classic Tool se ha actualizado!</b>
-        \n\nSI las nuevas funcionalidades, arreglos o la app en general te hacer feliz,
-        por favor, considera hacer al desarrollador feliz. !Cómprale una cerveza! ;)
-        \n\n\u2022 <a href="market://details?id=de.syss.MifareClassicToolDonate">Obtén la versión de donadores</a>
-        \n\u2022 <a href="https://github.com/ikarus23/MifareClassicTool/blob/master/README.md#mifare-classic-tool-mct">MCT
-        en GitHub / link para donar</a>
-    </string>
     <string name="dialog_save_before_quitting_title">Cambios sin guardar</string>
         <string name="dialog_save_before_quitting"><b>¡Hay cambios sin guardar!</b>
         \n¿Quieres guardar esos cambios?

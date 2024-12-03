@@ -1079,7 +1079,7 @@ public class Common extends Application {
 
         // Error. The tag is gone.
         Toast.makeText(context, R.string.info_no_tag_found,
-                Toast.LENGTH_LONG).show();
+                Toast.LENGTH_SHORT).show();
         return null;
     }
 

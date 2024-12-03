@@ -22,16 +22,17 @@
 <resources>
 
     <!-- Common stuff -->
-    <string name="app_name">MIFARE Classic Tool</string>
+    <string name="app_name">RFID for CFS</string>
     <string name="app_version">Versione App</string>
 
     <!-- Activity titles -->
     <string name="title_activity_main">MIFARE Classic Tool</string>
+    <string name="title_activity_main_cfsrfid">RFID for CFS</string>
     <string name="title_activity_read_tag">Leggi dal tag</string>
     <string name="title_activity_dump_editor">Editor dei dump</string>
     <string name="title_activity_access_conditions">Condizioni di accesso</string>
     <string name="title_activity_write_tag">Scrivi sul tag</string>
-    <string name="title_activity_create_key_map">Associa le chiavi ai settori</string>
+    <string name="title_activity_create_key_map">Write Tag</string>
     <string name="title_activity_file_chooser">Scegli file</string>
     <string name="title_activity_value_blocks">Valori interi dei blocchi</string>
     <string name="title_activity_key_editor">Editor delle chiavi</string>
@@ -222,8 +223,7 @@
     <string name="action_change">Cambia</string>
     <string name="action_read_all_sectors">Leggi tutti i settori</string>
     <string name="action_write_block">Scrivi Blocco</string>
-    <string name="action_create_key_map_and_write_block">Inizia la mappatura e
-        scrivi i blocchi</string>
+    <string name="action_create_key_map_and_write_block">Write</string>
     <string name="action_create_key_map_and_write_dump">Inizia la mappatura e
         scrivi il dump</string>
     <string name="action_create_key_map_and_factory_format">Inizia la mappatura e
@@ -437,11 +437,7 @@
     <string name="dialog_new_file_title">Nuovo file</string>
     <string name="dialog_new_file">Inserisci un nome per il nuovo file:</string>
     <string name="dialog_first_run_title">ATTENZIONE</string>
-    <string name="dialog_first_run">Quest\'app è rivolta
-        agli utenti che hanno familiarità con la tecnologia MIFARE Classic. L\'app deve eseguire operazioni di basso livello,
-        quindi quasi tutti i dati in ingresso e in uscita sono in formato esadecimale, ed è importante che tu capisca cosa si sta facendo.
-        Ad esempio, se scrivi dati errati su un blocco, potresti causare danni irreparabili al tag.
-        \n\n<b> PER MAGGIORI INFORMAZIONI E ASSISTENZA, VEDERE LA SEZIONE \"Informazioni\" dell\'app.</b></string>
+    <string name="dialog_first_run">This application has been written to work with Creality 3D Printers to be compatible with their RFID data format as we understand it. The Advanced mode will allow you to put just about any data on an RFID tag, and that data might negatively affect your printer.</string>
     <string name="dialog_write_issues_title">Problemi con la scrittura</string>
     <string name="dialog_write_issues">È stato rilevato un problema che influisce sulla scrittura del tag.
         Si prega di controllare TUTTA la lista sottostante!</string>
@@ -528,16 +524,6 @@
     <string name="dialog_save_conflict_keyfile">Questo file esiste già.
         Cosa vuoi fare?</string>
     <string name="dialog_donate_title">Dona</string>
-    <string name="dialog_donate"><b>MIFARE Classic Tool è stato aggiornato!</b>
-        \nPuoi trovare il
-        <a href="https://raw.github.com/ikarus23/MifareClassicTool/master/CHANGELOG.txt">changelog completo</a>
-        online.
-        \n\nSe le nuove funzionalità, i fix, o l\'app in generale ti hanno aiutato,
-        prendi in considerazione la possibilità di aiutare lo sviluppatore. Offrigli una birra! ;)
-        \n\n\u2022 <a href="market://details?id=de.syss.MifareClassicToolDonate">Ottieni la versione donatore</a>
-        \n\u2022 <a href="https://github.com/ikarus23/MifareClassicTool/blob/master/README.md#mifare-classic-tool-mct">MCT
-        su GitHub / link per donare</a>
-    </string>
     <string name="dialog_save_before_quitting_title">Cambiamenti non salvati</string>
     <string name="dialog_save_before_quitting"><b>Ci sono cambiamenti non salvati!</b>
         \nLi vuoi salvare?

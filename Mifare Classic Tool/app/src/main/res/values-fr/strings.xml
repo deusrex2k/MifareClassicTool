@@ -22,16 +22,17 @@
 <resources>
 
     <!-- Common stuff -->
-    <string name="app_name">MIFARE Classic Tool</string>
+    <string name="app_name">RFID for CFS</string>
     <string name="app_version">Version de l\'Appli</string>
 
     <!-- Activity titles -->
     <string name="title_activity_main">MIFARE Classic Tool</string>
+    <string name="title_activity_main_cfsrfid">RFID for CFS</string>
     <string name="title_activity_read_tag">Lire le Tag</string>
     <string name="title_activity_dump_editor">Editer le dump</string>
     <string name="title_activity_access_conditions">Conditions d\'accès</string>
     <string name="title_activity_write_tag">Écrire sur le tag</string>
-    <string name="title_activity_create_key_map">Associer les clés aux Secteurs</string>
+    <string name="title_activity_create_key_map">Write Tag</string>
     <string name="title_activity_file_chooser">Sélecteur de fichier</string>
     <string name="title_activity_value_blocks">Value Blocks au format numérique</string>
     <string name="title_activity_key_editor">Éditeur de clés</string>
@@ -222,8 +223,7 @@
     <string name="action_change">Changer</string>
     <string name="action_read_all_sectors">Lire tous les secteurs</string>
     <string name="action_write_block">Écrire Bloc</string>
-    <string name="action_create_key_map_and_write_block">Démarrer l\'association et
-        écrire les Blocs</string>
+    <string name="action_create_key_map_and_write_block">Write</string>
     <string name="action_create_key_map_and_write_dump">Démarrer l\'association et
         écrire le Dump</string>
     <string name="action_create_key_map_and_factory_format">Démarrer l\'association et
@@ -468,15 +468,7 @@
     <string name="dialog_new_file_title">Nouveau fichier</string>
     <string name="dialog_new_file">Entrer un nom de fichier pour le nouveau fichier:</string>
     <string name="dialog_first_run_title">ATTENTION</string>
-    <string name="dialog_first_run">Cette application est dédiée
-		aux utilisateurs qui ont au moins une connaissance de base de la
-        technologie MIFARE Classic. Ses fonctionnalités sont basiques et bas
-        niveau. Par conséquent, presque toutes les entrées et sorties de données sont en hexadécimal.
-        Il est également important que vous compreniez ce que vous faites, par exemple si
-        vous écrivez des données dans un tag. Écrire les mauvaises données dans certains
-        blocs peut causer des dommages irréparables au tag.
-        \n\n<b>POUR PLUS D\'INFORMATIONS ET D\'AIDE, RÉFÉREZ-VOUS A LA SECTION
-		\"Aide et infos\" de l\'appli.</b></string>
+    <string name="dialog_first_run">This application has been written to work with Creality 3D Printers to be compatible with their RFID data format as we understand it. The Advanced mode will allow you to put just about any data on an RFID tag, and that data might negatively affect your printer.</string>
     <string name="dialog_write_issues_title">Problèmes lors de l\'écriture</string>
     <string name="dialog_write_issues">Des erreurs ont été détectés, qui ont affecté l\'écriture sur le tag.
         Veuillez vérifier TOUS les messages ci-dessous!</string>
@@ -581,17 +573,6 @@
     <string name="dialog_save_conflict_keyfile">Ce fichier existe déjà.
         Que voulez-vous faire?</string>
     <string name="dialog_donate_title">Faire un don</string>
-    <string name="dialog_donate"><b>MIFARE Classic Tool a été mis à jour!</b>
-        \nVous pouvez trouver le
-        <a href="https://raw.github.com/ikarus23/MifareClassicTool/master/CHANGELOG.txt">changelog complet</a>
-        en ligne.
-        \n\nSi les nouvelles fonctionnalités, les corrections, ou l\'appli en général vous plaisent,
-        envisagez de rendre le développeur heureux. Achetez-lui une bière! ;)
-        \n\n\u2022 <a href="market://details?id=de.syss.MifareClassicToolDonate">Obtenir
-		la version donateur</a>
-        \n\u2022 <a href="https://github.com/ikarus23/MifareClassicTool/blob/master/README.md#mifare-classic-tool-mct">MCT
-        sur GitHub / lien pour faire un don</a>
-    </string>
     <string name="dialog_save_before_quitting_title">Modifications non enregistrés</string>
     <string name="dialog_save_before_quitting"><b>Il y a des modifications non enregistrées!</b>
         \nVoulez vous enregistrer vos modifications?

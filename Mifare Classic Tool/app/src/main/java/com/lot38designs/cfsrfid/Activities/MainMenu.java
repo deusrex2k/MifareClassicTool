@@ -73,7 +73,9 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
+import com.google.android.material.chip.Chip;
 import com.lot38designs.cfsrfid.Common;
 import com.lot38designs.cfsrfid.MCReader;
 import com.lot38designs.cfsrfid.R;
@@ -100,10 +102,7 @@ public class MainMenu extends AppCompatActivity {
     private boolean mDonateDialogWasShown = false;
     private boolean mInfoExternalNfcDialogWasShown = false;
     private boolean mHasNoNfc = false;
-    private Button mReadTag;
-    private Button mWriteTag;
-    private Button mKeyEditor;
-    private Button mDumpEditor;
+
     private Intent mOldIntent = null;
 
     public final static String EXTRA_DUMP =
@@ -125,6 +124,8 @@ public class MainMenu extends AppCompatActivity {
     private EditText cfsrfidNumber;
     private EditText cfsrfidReserve;
     private Button cfsrfidButtonColor;
+
+    private Chip chipAdvanced;
 
     /**
      * Nodes (stats) MCT passes through during its startup.
@@ -150,15 +151,6 @@ public class MainMenu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
-        // Show App version and footer.
-        TextView tv = findViewById(R.id.textViewMainFooter);
-        tv.setText(getString(R.string.app_version)
-                + ": " + Common.getVersionCode());
-
-        // Add the context menu to the tools button.
-        Button tools = findViewById(R.id.buttonMainTools);
-        registerForContextMenu(tools);
-
         cfsrfidBatch = findViewById(R.id.cfsrfidBatch);
         cfsrfidDateY = findViewById(R.id.cfsrfidDateY);
         cfsrfidDateM = findViewById(R.id.cfsrfidDateM);
@@ -169,6 +161,11 @@ public class MainMenu extends AppCompatActivity {
         cfsrfidNumber = findViewById(R.id.cfsrfidNumber);
         cfsrfidReserve = findViewById(R.id.cfsrfidReserve);
         cfsrfidButtonColor = findViewById(R.id.cfsrfidButtonColor);
+        chipAdvanced = findViewById(R.id.chipAdvanced);
+
+        onAdvanced(null);
+        onColorUpdate();
+        onRandomBatch(null); //Set batch to random
 
         // Create an ArrayAdapter using the string array and a default spinner layout.
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -211,12 +208,6 @@ public class MainMenu extends AppCompatActivity {
 //            }
 //
 //        }
-
-        // Bind main layout buttons.
-        mReadTag = findViewById(R.id.buttonMainReadTag);
-        mWriteTag = findViewById(R.id.buttonMainWriteTag);
-        mKeyEditor = findViewById(R.id.buttonMainEditKeyDump);
-        mDumpEditor = findViewById(R.id.buttonMainEditCardDump);
 
         initFolders();
         copyStdKeysFiles();
@@ -406,8 +397,7 @@ public class MainMenu extends AppCompatActivity {
      */
     private void useAsEditorOnly(boolean useAsEditorOnly) {
         Common.setUseAsEditorOnly(useAsEditorOnly);
-        mReadTag.setEnabled(!useAsEditorOnly);
-        mWriteTag.setEnabled(!useAsEditorOnly);
+
     }
 
     /**
@@ -779,8 +769,6 @@ public class MainMenu extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        mKeyEditor.setEnabled(true);
-        mDumpEditor.setEnabled(true);
         useAsEditorOnly(Common.useAsEditorOnly());
         // The start up nodes will also enable the NFC foreground dispatch if all
         // conditions are met (has NFC & NFC enabled).
@@ -910,11 +898,10 @@ public class MainMenu extends AppCompatActivity {
     }
 
     /**
-     * Show the {@link Preferences}.
+     * Show the donation Dialog again
      */
     private void onShowPreferences() {
-        Intent intent = new Intent(this, Preferences.class);
-        startActivity(intent);
+        createDonateDialog().show();
     }
 
     /**
@@ -1064,7 +1051,7 @@ public class MainMenu extends AppCompatActivity {
     private String getDataString(){
 
         String material = cfsrfidMaterial.getSelectedItem().toString().substring(0, 5);
-        String data = cfsrfidBatch.getText().toString() + cfsrfidDateY.getText().toString() + cfsrfidDateM.getText().toString() + cfsrfidDateD.getText().toString() + cfsrfidSupplier.getText().toString() + material + cfsrfidColor.getText().toString() + cfsrfidNumber.getText().toString() + cfsrfidReserve.getText().toString();
+        String data = cfsrfidBatch.getText().toString().toUpperCase() + cfsrfidDateY.getText().toString() + cfsrfidDateM.getText().toString() + cfsrfidDateD.getText().toString() + cfsrfidSupplier.getText().toString().toUpperCase() + material + cfsrfidColor.getText().toString() + cfsrfidNumber.getText().toString() + cfsrfidReserve.getText().toString();
         //Pad the string so there's enough trailing zeros
         data = data + "00000000000000000000000000000000";
         Log.d("CFSRFID", "getDataString.rawdata: " + data);
@@ -1099,7 +1086,7 @@ public class MainMenu extends AppCompatActivity {
         if (cfsrfidColor.getText().toString().length()!=7){
             return false;
         }
-        if (cfsrfidNumber.getText().toString() .length()!=6){
+        if (cfsrfidNumber.getText().toString().length()!=6){
             return false;
         }
         //No need to check Reserve, we pad the end with 0s
@@ -1111,7 +1098,7 @@ public class MainMenu extends AppCompatActivity {
     public void onSetDefaults(View view)
     {
         cfsrfidMaterial.setSelection(29);
-        cfsrfidBatch.setText("7A3");
+        onRandomBatch(view);
         cfsrfidDateY.setText("24");
         cfsrfidDateM.setText("1");
         cfsrfidDateD.setText("20");
@@ -1119,6 +1106,33 @@ public class MainMenu extends AppCompatActivity {
         cfsrfidColor.setText("#0000FF");
         cfsrfidNumber.setText("016500");
         cfsrfidReserve.setText("0001000000000000000");
+    }
+
+    public void onClickRead(View view) {
+        Toast.makeText(this, "Sorry, Reading tags isn't implemented yet :(",
+            Toast.LENGTH_LONG).show();
+    }
+
+    public void onAdvanced(View view){
+        if (chipAdvanced.isChecked())
+        {
+            cfsrfidBatch.setEnabled(true);
+            cfsrfidDateY.setEnabled(true);
+            cfsrfidDateM.setEnabled(true);
+            cfsrfidDateD.setEnabled(true);
+            cfsrfidSupplier.setEnabled(true);
+            cfsrfidNumber.setEnabled(true);
+            cfsrfidReserve.setEnabled(true);
+        }
+        else {
+            cfsrfidBatch.setEnabled(false);
+            cfsrfidDateY.setEnabled(false);
+            cfsrfidDateM.setEnabled(false);
+            cfsrfidDateD.setEnabled(false);
+            cfsrfidSupplier.setEnabled(false);
+            cfsrfidNumber.setEnabled(false);
+            cfsrfidReserve.setEnabled(false);
+        }
     }
 
     private boolean checkColor(String str){
@@ -1139,7 +1153,7 @@ public class MainMenu extends AppCompatActivity {
 
         //TODO: .setInitialColor(color);
         new ColorPickerDialog.Builder(this)
-            .setTitle("ColorPicker Dialog")
+            .setTitle("Advanced Colors")
             .setPreferenceName("MyColorPickerDialog")
             .setPositiveButton(getString(R.string.action_ok),
                 new ColorEnvelopeListener() {
@@ -1156,18 +1170,59 @@ public class MainMenu extends AppCompatActivity {
                         dialogInterface.dismiss();
                     }
                 })
-            .attachAlphaSlideBar(true) // the default value is true.
+            .attachAlphaSlideBar(false) // the default value is true.
             .attachBrightnessSlideBar(true)  // the default value is true.
             .setBottomSpace(12) // set a bottom space between the last slidebar and buttons.
             .show();
+    }
+
+    public void onColorPickerBasic(View view){
+        //Switch to advanced color picker
+        if(chipAdvanced.isChecked())
+        {
+            onColorPicker(view);
+        }
+        else {
+
+
+            //TODO: .setInitialColor(color);
+            ColorPickerDialog.Builder builder =
+                new ColorPickerDialog.Builder(this)
+                    .setTitle("Creality Colors")
+                    .setPreferenceName("Color")
+                    .attachAlphaSlideBar(false) // the default value is true.
+                    .attachBrightnessSlideBar(false)  // the default value is true.
+                    .setPositiveButton(
+                        getString(R.string.action_ok),
+                        (ColorEnvelopeListener) (envelope, fromUser) -> colorSelected(envelope))
+                    .setNegativeButton(
+                        getString(R.string.action_cancel), (dialogInterface, i) -> dialogInterface.dismiss());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder.getColorPickerView().setPaletteDrawable(getDrawable(R.drawable.crealitycolors));
+            }
+            builder.show();
+        }
+    }
+
+    private void colorSelected (ColorEnvelope envelope){
+        Log.d("CFSRFID","colorSelected:" + envelope.getHexCode());
+        cfsrfidColor.setText("#" + envelope.getHexCode().substring(2, 8));
+    }
+    public void onRandomBatch(View view){
+        Random rand = new Random();
+        int newBatch = rand.nextInt (4095);
+        String newString = Integer.toHexString(newBatch).toUpperCase();
+        cfsrfidBatch.setText(newString);
+        if (cfsrfidBatch.getText().length()==1){cfsrfidBatch.setText(cfsrfidBatch.getText()+"00");}
+        if (cfsrfidBatch.getText().length()==2){cfsrfidBatch.setText(cfsrfidBatch.getText()+"0");}
     }
 
     public void onColorUpdate(){
         if (checkColor(cfsrfidColor.getText().toString())) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 int red = Integer.decode("0x" +cfsrfidColor.getText().toString().substring(1,3));
-                int blue = Integer.decode("0x" +cfsrfidColor.getText().toString().substring(3,5));
-                int green = Integer.decode("0x" +cfsrfidColor.getText().toString().substring(5,7));
+                int green = Integer.decode("0x" +cfsrfidColor.getText().toString().substring(3,5));
+                int blue = Integer.decode("0x" +cfsrfidColor.getText().toString().substring(5,7));
                 int color = Color.rgb(red, green, blue);
                 ColorDrawable cd = new ColorDrawable(color);
                 cfsrfidButtonColor.setForeground(cd);

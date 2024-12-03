@@ -22,17 +22,17 @@
 <resources>
 
     <!-- Common stuff -->
-    <string name="app_name">RFID Tool for Creality</string>
+    <string name="app_name">RFID for CFS</string>
     <string name="app_version">App Version</string>
 
     <!-- Activity titles -->
     <string name="title_activity_main">MIFARE Classic Tool</string>
-    <string name="title_activity_main_cfsrfid">RFID Tool for Creality</string>
+    <string name="title_activity_main_cfsrfid">RFID for CFS</string>
     <string name="title_activity_read_tag">Read Tag</string>
     <string name="title_activity_dump_editor">Dump Editor</string>
     <string name="title_activity_access_conditions">Access Conditions</string>
     <string name="title_activity_write_tag">Write Tag</string>
-    <string name="title_activity_create_key_map">Map Keys to Sectors</string>
+    <string name="title_activity_create_key_map">Write Tag</string>
     <string name="title_activity_file_chooser">File Chooser</string>
     <string name="title_activity_value_blocks">Value Blocks as Integers</string>
     <string name="title_activity_key_editor">Key Editor</string>
@@ -272,8 +272,7 @@
     <string name="action_change">Change</string>
     <string name="action_read_all_sectors">Read All Sectors</string>
     <string name="action_write_block">Write Block</string>
-    <string name="action_create_key_map_and_write_block">Start Mapping and
-        Write Block</string>
+    <string name="action_create_key_map_and_write_block">Write</string>
     <string name="action_create_key_map_and_write_dump">Start Mapping and
         Write Dump</string>
     <string name="action_create_key_map_and_factory_format">Start Mapping and
@@ -328,7 +327,7 @@
     <string name="action_delete_file">Delete File</string>
     <string name="action_remove_duplicates">Remove Duplicates</string>
     <string name="action_show_preferences">Preferences</string>
-    <string name="action_show_about">About</string>
+    <string name="action_show_about">About MCT</string>
     <string name="action_decode_manuf_date">Decode date of manufacture</string>
     <string name="action_replace">Replace</string>
     <string name="action_append">Append</string>
@@ -528,15 +527,11 @@
     <string name="dialog_new_file_title">New file</string>
     <string name="dialog_new_file">Enter a file name for the new file:</string>
     <string name="dialog_first_run_title">WARNING NOTICE</string>
-    <string name="dialog_first_run">This application is dedicated
-        to users who have at least basic familiarity with the
-        MIFARE Classic technology. Its features are basic and at a low
-        level. Therefore nearly all data input and output will be hexadecimal.
-        It is also important that you understand what you are doing, e.g. if
-        you write data to a tag. Writing the wrong data to certain
-        blocks may cause irreparable damage to the tag.
-        \n\n<b>FOR MORE INFORMATION AND HELP CHECK OUT THE
-        \"Help and Info\" SECTION.</b></string>
+    <string name="dialog_first_run">This application has been written to work with Creality 3D Printers to be compatible with their RFID data format as we understand it. The Advanced mode will allow you to put just about any data on an RFID tag, and that data might negatively affect your printer.
+        \n
+        \nAddtionally, this app has been designed to write to safe blocks on a MIFARE Classic 1k tag, but there is no guarantee that this app will not cause irreparable damage to the tags.
+        \n
+        \nAlso note that this app relies on the current firmware of the Creality K2 and CFS allowing the use of the default MIFARE public key, and that Creality could disable this key at any time.</string>
     <string name="dialog_write_issues_title">Write Issues</string>
     <string name="dialog_write_issues">There were issues detected, which affect writing to the tag.
         Check the WHOLE list below!</string>
@@ -641,16 +636,22 @@
     <string name="dialog_save_conflict_keyfile">This file already exists.
         What do you want to do?</string>
     <string name="dialog_donate_title">Donate</string>
-    <string name="dialog_donate"><b>MIFARE Classic Tool has been updated!</b>
-        \nYou can find the full
-        <a href="https://raw.github.com/ikarus23/MifareClassicTool/master/CHANGELOG.txt">changelog</a>
-        online.
-        \n\nIf the new features, fixes or the app in general makes you happy,
-        please consider to make the developer happy. Buy him a beer! ;)
-        \n\n\u2022 <a href="market://details?id=de.syss.MifareClassicToolDonate">Get
-        the donate version</a>
+    <string name="dialog_donate"><b>RFID Tool for Creality</b>
+        \n\nFork of MIFARE Classic tool (MCT) by ikarus23
+        \n
+        \nIf this app makes you happy, please consider to make the original developer happy. Buy him a beer! ;)
+        \n
+        \n\u2022 <a href="market://details?id=de.syss.MifareClassicToolDonate">Get
+                the donate MCT version</a>
+        \n
         \n\u2022 <a href="https://github.com/ikarus23/MifareClassicTool/blob/master/README.md#mifare-classic-tool-mct">MCT
-        on GitHub / donate link</a>
+                on GitHub / donate link</a>
+        \n
+        \nCreality RFID decoded by Uneasy
+        \n\u2022 <a href="https://www.paypal.com/donate/?hosted_button_id=24DADLZ3RR64Y">Donate to Uneasy</a>
+        \n
+        \nRFID Tool for Creality by deusrex
+        \n\u2022 <a href="https://ko-fi.com/lot38designs">Buy deusrex a Coffee</a>
     </string>
     <string name="dialog_save_before_quitting_title">Unsaved changes</string>
     <string name="dialog_save_before_quitting"><b>There are unsaved changes!</b>
