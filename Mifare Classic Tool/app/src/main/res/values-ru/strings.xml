@@ -203,7 +203,7 @@
     <string name="action_exit_app">Выйти из приложения</string>
     <string name="action_nfc">Перейти к настройкам NFC</string>
     <string name="action_create_key_map">Сопоставьте ключи к секторам</string>
-    <string name="action_create_key_map_and_read">Прочитать метку</string>
+    <string name="action_create_key_map_and_read">Read</string>
     <string name="action_help">Справка и информация</string>
     <string name="action_editor_only">Режим «Оффлайн»</string>
     <string name="action_ok">OK</string>

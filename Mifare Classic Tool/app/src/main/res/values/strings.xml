@@ -53,6 +53,7 @@
 
     <!-- Filament Material Dropdown -->
     <string-array name="materials_array">
+        <item>-No Selection-</item>
         <item>10001:HP-TPU</item>
         <item>11001:CR-Nylon</item>
         <item>13001:CR-PLACarbon</item>
@@ -96,6 +97,13 @@
         <item>02001:HyperPLA-CF</item>
     </string-array>
 
+    <!-- Filament Material Dropdown -->
+    <string-array name="weights_array">
+        <item>-No Selection-</item>
+        <item>1 kilogram</item>
+        <item>500 grams</item>
+        <item>250 grams</item>
+    </string-array>
     <!-- Texts (labels etc.) -->
     <string name="text_choose_key_files">Choose some key file(s):</string>
     <string name="text_wait_read_tag">Reading tag&#8230;\n(Don\'t remove tag)</string>
@@ -261,8 +269,7 @@
     <string name="action_exit_app">Exit App</string>
     <string name="action_nfc">Go to NFC Settings</string>
     <string name="action_create_key_map">Map Keys to Sectors</string>
-    <string name="action_create_key_map_and_read">Start Mapping and
-        Read Tag</string>
+    <string name="action_create_key_map_and_read">Read</string>
     <string name="action_help">Help and Info</string>
     <string name="action_editor_only">\"Offline\" Mode</string>
     <string name="action_ok">OK</string>

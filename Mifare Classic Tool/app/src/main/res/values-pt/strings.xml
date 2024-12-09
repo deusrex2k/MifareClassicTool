@@ -217,8 +217,7 @@
     <string name="action_exit_app">Sair da aplicação</string>
     <string name="action_nfc">Ir a ajustes de NFC</string>
     <string name="action_create_key_map">Mapear chaves a sectores</string>
-    <string name="action_create_key_map_and_read">Iniciar mapeamento e
-        ler etiqueta</string>
+    <string name="action_create_key_map_and_read">Read</string>
     <string name="action_help">Ajuda e info</string>
     <string name="action_editor_only">Usar só como editor</string>
     <string name="action_ok">Aceitar</string>

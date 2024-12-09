@@ -212,8 +212,7 @@
     <string name="action_exit_app">Quitter l\'Appli</string>
     <string name="action_nfc">Aller dans les Paramètres NFC</string>
     <string name="action_create_key_map">Associer les clés aux secteurs</string>
-    <string name="action_create_key_map_and_read">Lire le tag et associer
-        les clés</string>
+    <string name="action_create_key_map_and_read">Read</string>
     <string name="action_help">Aide et infos</string>
     <string name="action_editor_only">Mode \"Hors Ligne\"</string>
     <string name="action_ok">OK</string>

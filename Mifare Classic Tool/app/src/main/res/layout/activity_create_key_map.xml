@@ -71,7 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/linearLayoutCreateKeyMap"
         android:paddingLeft="5dp"
-        android:text="Place tag on phone and press Write button. \n\nNote: You can skip this screen by placing the tag while on the preious screen."
+        android:text="Place tag on phone and press Write or Read button. \n\nNote: You can skip this screen by placing the tag while on the preious screen."
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Button

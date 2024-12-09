@@ -92,44 +92,23 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
 
-                    <LinearLayout
+                    <Button
+                        android:id="@+id/button5"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:layout_weight="50"
+                        android:onClick="onRandomBatch"
+                        app:icon="@android:drawable/stat_notify_sync_noanim"
+                        tools:text="Randomize" />
+
+                    <Button
+                        android:id="@+id/button4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
                         android:layout_weight="5"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/textView"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="10dp"
-                            android:text="Batch:" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
-
-                            <Button
-                                android:id="@+id/button5"
-                                android:layout_width="60dp"
-                                android:layout_height="45dp"
-                                android:layout_weight="1"
-                                android:onClick="onRandomBatch"
-                                app:icon="@android:drawable/stat_notify_sync_noanim" />
-
-                            <EditText
-                                android:id="@+id/cfsrfidBatch"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="5"
-                                android:height="48dp"
-                                android:ems="10"
-                                android:inputType="text"
-                                android:text="7A3" />
-                        </LinearLayout>
-
-                    </LinearLayout>
+                        android:text="Help" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipAdvanced"
@@ -139,6 +118,102 @@
                         android:checkable="true"
                         android:onClick="onAdvanced"
                         android:text="Advanced" />
+
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/divider11"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="?android:attr/listDivider" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="6"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/TextViewBatch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:layout_weight="6"
+                                android:text="Batch:" />
+
+                            <EditText
+                                android:id="@+id/cfsrfidBatch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="3"
+                                android:height="48dp"
+                                android:ems="10"
+                                android:inputType="text"
+                                android:text="7A3" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="6"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/textView8"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:layout_weight="6"
+                                android:text="Serial:" />
+
+                            <EditText
+                                android:id="@+id/cfsrfidSerial"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="3"
+                                android:height="48dp"
+                                android:ems="10"
+                                android:inputType="text"
+                                android:text="000001" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="6"
+                            android:orientation="vertical">>
+
+                            <TextView
+                                android:id="@+id/textView3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="Supplier:" />
+
+                            <EditText
+                                android:id="@+id/cfsrfidSupplier"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:height="48dp"
+                                android:ems="10"
+                                android:inputType="text"
+                                android:text="0A21" />
+
+                        </LinearLayout>
+
+
+                    </LinearLayout>
+
 
                 </LinearLayout>
 
@@ -191,27 +266,6 @@
                         android:text="20" />
                 </LinearLayout>
 
-                <View
-                    android:id="@+id/divider11"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="?android:attr/listDivider" />
-
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="Supplier:" />
-
-                <EditText
-                    android:id="@+id/cfsrfidSupplier"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:height="48dp"
-                    android:ems="10"
-                    android:inputType="text"
-                    android:text="0A21" />
 
                 <View
                     android:id="@+id/divider12"
@@ -226,10 +280,26 @@
                     android:layout_marginTop="10dp"
                     android:text="Material:" />
 
-                <Spinner
-                    android:id="@+id/cfsrfidMaterial"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <Spinner
+                        android:id="@+id/cfsrfidMaterial"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="5" />
+
+                    <EditText
+                        android:id="@+id/cfsrfidMaterialText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="5"
+                        android:height="48dp"
+                        android:ems="10"
+                        android:text="01001" />
+                </LinearLayout>
 
                 <View
                     android:id="@+id/divider13"
@@ -242,16 +312,30 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Number:" />
+                    android:layout_weight="5"
+                    android:text="Length:" />
 
-                <EditText
-                    android:id="@+id/cfsrfidNumber"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:height="48dp"
-                    android:ems="10"
-                    android:inputType="text"
-                    android:text="016500" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <Spinner
+                        android:id="@+id/cfsrfidLengthSpin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="5" />
+
+                    <EditText
+                        android:id="@+id/cfsrfidLength"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="5"
+                        android:height="48dp"
+                        android:ems="10"
+                        android:inputType="text"
+                        android:text="016500" />
+                </LinearLayout>
 
                 <View
                     android:id="@+id/divider14"
@@ -312,7 +396,7 @@
                     android:height="48dp"
                     android:ems="10"
                     android:inputType="text"
-                    android:text="0001000000000000000" />
+                    android:text="00000000000000" />
 
 
             </LinearLayout>

@@ -205,7 +205,7 @@
     <string name="action_exit_app">退出App</string>
     <string name="action_nfc">转到NFC设置</string>
     <string name="action_create_key_map">映射密钥到扇区</string>
-    <string name="action_create_key_map_and_read">开始映射并读取标签</string>
+    <string name="action_create_key_map_and_read">Read</string>
     <string name="action_help">帮助信息</string>
     <string name="action_editor_only">使用离线模式</string>
     <string name="action_ok">OK</string>

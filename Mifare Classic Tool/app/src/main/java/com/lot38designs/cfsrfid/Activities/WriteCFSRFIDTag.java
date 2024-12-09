@@ -92,7 +92,7 @@ public class WriteCFSRFIDTag extends BasicActivity {
         cfsrfidSupplier = findViewById(R.id.cfsrfidSupplier);
         cfsrfidMaterial = findViewById(R.id.cfsrfidMaterial);
         cfsrfidColor = findViewById(R.id.cfsrfidColor);
-        cfsrfidNumber = findViewById(R.id.cfsrfidNumber);
+        cfsrfidNumber = findViewById(R.id.cfsrfidLength);
         cfsrfidReserve = findViewById(R.id.cfsrfidReserve);
 
     }

@@ -32,11 +32,12 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -49,7 +50,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -71,11 +72,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
 import com.google.android.material.chip.Chip;
+import com.google.android.material.navigation.NavigationBarView;
 import com.lot38designs.cfsrfid.Common;
 import com.lot38designs.cfsrfid.MCReader;
 import com.lot38designs.cfsrfid.R;
@@ -108,12 +111,12 @@ public class MainMenu extends AppCompatActivity {
     public final static String EXTRA_DUMP =
         "de.syss.MifareClassicTool.Activity.DUMP";
 
-    private static final int FC_WRITE_DUMP = 1;
-    private static final int CKM_WRITE_DUMP = 2;
+    private final static int KEY_MAP_CREATOR = 1;
     private static final int CKM_WRITE_BLOCK = 3;
     private static final int CKM_FACTORY_FORMAT = 4;
     private static final int CKM_WRITE_NEW_VALUE = 5;
-
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    private SparseArray<String[]> mRawDump;
     private EditText cfsrfidBatch;
     private EditText cfsrfidDateY;
     private EditText cfsrfidDateM;
@@ -121,10 +124,12 @@ public class MainMenu extends AppCompatActivity {
     private EditText cfsrfidSupplier;
     private Spinner cfsrfidMaterial;
     private EditText cfsrfidColor;
-    private EditText cfsrfidNumber;
+    private EditText cfsrfidLength;
     private EditText cfsrfidReserve;
     private Button cfsrfidButtonColor;
-
+    private Spinner cfsrfidLengthSpin;
+    private EditText cfsrfidMaterialText;
+    private EditText cfsrfidSerial;
     private Chip chipAdvanced;
 
     /**
@@ -158,14 +163,17 @@ public class MainMenu extends AppCompatActivity {
         cfsrfidSupplier = findViewById(R.id.cfsrfidSupplier);
         cfsrfidMaterial = findViewById(R.id.cfsrfidMaterial);
         cfsrfidColor = findViewById(R.id.cfsrfidColor);
-        cfsrfidNumber = findViewById(R.id.cfsrfidNumber);
+        cfsrfidLength = findViewById(R.id.cfsrfidLength);
         cfsrfidReserve = findViewById(R.id.cfsrfidReserve);
         cfsrfidButtonColor = findViewById(R.id.cfsrfidButtonColor);
         chipAdvanced = findViewById(R.id.chipAdvanced);
+        cfsrfidLengthSpin = findViewById(R.id.cfsrfidLengthSpin);
+        cfsrfidMaterialText = findViewById(R.id.cfsrfidMaterialText);
+        cfsrfidSerial = findViewById(R.id.cfsrfidSerial);
 
         onAdvanced(null);
         onColorUpdate();
-        onRandomBatch(null); //Set batch to random
+        onRandomBatch(null); //Set batch, serial, and supplier to random
 
         // Create an ArrayAdapter using the string array and a default spinner layout.
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -173,11 +181,24 @@ public class MainMenu extends AppCompatActivity {
             R.array.materials_array,
             android.R.layout.simple_spinner_item
         );
+
         // Specify the layout to use when the list of choices appears.
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner.
         cfsrfidMaterial.setAdapter(adapter);
         cfsrfidMaterial.setSelection(29);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout.
+        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(
+            this,
+            R.array.weights_array,
+            android.R.layout.simple_spinner_item
+        );
+        // Specify the layout to use when the list of choices appears.
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner.
+        cfsrfidLengthSpin.setAdapter(adapter2);
+        cfsrfidLengthSpin.setSelection(0);
 
         cfsrfidColor.addTextChangedListener(new TextWatcher() {
 
@@ -193,6 +214,54 @@ public class MainMenu extends AppCompatActivity {
             }
         });
 
+        cfsrfidMaterialText.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {}
+
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                onMaterialTxtUpdate();
+            }
+        });
+
+        cfsrfidLength.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {}
+
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                onLengthTxtUpdate();
+            }
+        });
+
+        cfsrfidLengthSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+            {
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+                {
+                    onLenSpinUpdate();
+                }
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+        cfsrfidMaterial.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                onMatSpinUpdate();
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         // Restore state.
 //        if (savedInstanceState != null) {
@@ -408,7 +477,7 @@ public class MainMenu extends AppCompatActivity {
     private void setTheme() {
         SharedPreferences pref = Common.getPreferences();
         int themeID;
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             // Default to dark before Android 10.
             themeID = pref.getInt(Preferences.Preference.CustomAppTheme.toString(), 0);
         } else {
@@ -788,7 +857,7 @@ public class MainMenu extends AppCompatActivity {
     /**
      * Handle new Intent as a new tag Intent and if the tag/device does not
      * support MIFARE Classic, then run {@link TagInfoTool}.
-     * @see Common#treatAsNewTag(Intent, android.content.Context)
+     * @see Common#treatAsNewTag(Intent, Context)
      * @see TagInfoTool
      */
     @Override
@@ -1017,41 +1086,122 @@ public class MainMenu extends AppCompatActivity {
                     writeBlock();
                 }
                 break;
+            case KEY_MAP_CREATOR:
+                readTag();
+                break;
         }
-
-//        Intent openMainActivity = new Intent(this, MainMenu.class);
-//        openMainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//        startActivityIfNeeded(openMainActivity, 0);
-
-//        case FILE_CHOOSER_DUMP_FILE:
-//            if (resultCode == Activity.RESULT_OK) {
-//                Intent intent = new Intent(this, DumpEditor.class);
-//                intent.putExtra(FileChooser.EXTRA_CHOSEN_FILE,
-//                        data.getStringExtra(
-//                                FileChooser.EXTRA_CHOSEN_FILE));
-//                startActivity(intent);
-//            }
-//            break;
-//        case FILE_CHOOSER_KEY_FILE:
-//            if (resultCode == Activity.RESULT_OK) {
-//                Intent intent = new Intent(this, KeyEditor.class);
-//                intent.putExtra(FileChooser.EXTRA_CHOSEN_FILE,
-//                        data.getStringExtra(
-//                                FileChooser.EXTRA_CHOSEN_FILE));
-//                startActivity(intent);
-//            }
-//            break;
-//        }
     }
 
     private String toHex(String arg) {
         return String.format("%040x", new BigInteger(1, arg.getBytes(/*YOUR_CHARSET?*/)));
     }
 
+    /**
+     * Triggered by {@link #onActivityResult(int, int, Intent)}
+     * this method starts a worker thread that first reads the tag and then
+     * calls {@link #createTagDump(SparseArray)}.
+     */
+    private void readTag() {
+        final MCReader reader = Common.checkForTagAndCreateReader(this);
+        if (reader == null) {
+            return;
+        }
+        new Thread(() -> {
+            // Get key map from glob. variable.
+            mRawDump = reader.readAsMuchAsPossible(
+                Common.getKeyMap());
+
+            reader.close();
+
+            mHandler.post(() -> createTagDump(mRawDump));
+        }).start();
+    }
+
+    /**
+     * Create a tag dump in a format the {@link DumpEditor}
+     * can read (format: headers (sectors) marked with "+", errors
+     * marked with "*"), and then start the dump editor with this dump.
+     * @param rawDump A tag dump like {@link MCReader#readAsMuchAsPossible()}
+     * returns.
+     * @see DumpEditor#EXTRA_DUMP
+     * @see DumpEditor
+     */
+    private void createTagDump(SparseArray<String[]> rawDump) {
+        ArrayList<String> tmpDump = new ArrayList<>();
+        if (rawDump != null) {
+            if (rawDump.size() != 0) {
+                for (int i = Common.getKeyMapRangeFrom();
+                     i <= Common.getKeyMapRangeTo(); i++) {
+                    String[] val = rawDump.get(i);
+                    // Mark headers (sectors) with "+".
+                    tmpDump.add("+Sector: " + i);
+                    if (val != null ) {
+                        Collections.addAll(tmpDump, val);
+                    } else {
+                        // Mark sector as not readable ("*").
+                        tmpDump.add("*No keys found or dead sector");
+                    }
+                }
+                String[] dump = tmpDump.toArray(new String[0]);
+
+                // Show Dump Editor Activity.
+//                Intent intent = new Intent(this, DumpEditor.class);
+//                intent.putExtra(DumpEditor.EXTRA_DUMP, dump);
+//                startActivity(intent);
+                parseTagdata(dump);
+            } else {
+                // Error, keys from key map are not valid for reading.
+                Toast.makeText(this, R.string.info_none_key_valid_for_reading,
+                    Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(this, R.string.info_tag_removed_while_reading,
+                Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    private void parseTagdata(String[] dump){
+
+        Log.d("CFSRFID", "parseTagdata: " + dump[6]);
+        Log.d("CFSRFID", "parseTagdata: " + dump[7]);
+        Log.d("CFSRFID", "parseTagdata: " + dump[8]);
+        String hex = dump[6]+dump[7]+dump[8];
+        StringBuilder fullAscii = new StringBuilder();
+        for (int i = 0; i < hex.length(); i+=2) {
+            String str = hex.substring(i, i+2);
+            fullAscii.append((char)Integer.parseInt(str, 16));
+        }
+        cfsrfidBatch.setText(fullAscii.substring(0,3));
+        cfsrfidDateY.setText(fullAscii.substring(3,5));
+        cfsrfidDateM.setText(fullAscii.substring(5,6));
+        cfsrfidDateD.setText(fullAscii.substring(6,8));
+        cfsrfidSupplier.setText(fullAscii.substring(8,12));
+
+        String material = (fullAscii.substring(12,17));
+        int item = 0;
+        for (int i=0; i < cfsrfidMaterial.getAdapter().getCount(); i++) {
+            String thisItem = cfsrfidMaterial.getAdapter().getItem(i).toString();
+            if (thisItem.substring(0,5).equals(material)){
+                item = i;
+            }
+        }
+        cfsrfidMaterial.setSelection(item);
+        cfsrfidMaterialText.setText(material);
+
+        cfsrfidColor.setText(fullAscii.substring(17,24));
+        cfsrfidLength.setText(fullAscii.substring(24,28));
+        cfsrfidSerial.setText(fullAscii.substring(28, 34));
+        cfsrfidReserve.setText(fullAscii.substring(34,48));
+
+    }
     private String getDataString(){
 
-        String material = cfsrfidMaterial.getSelectedItem().toString().substring(0, 5);
-        String data = cfsrfidBatch.getText().toString().toUpperCase() + cfsrfidDateY.getText().toString() + cfsrfidDateM.getText().toString() + cfsrfidDateD.getText().toString() + cfsrfidSupplier.getText().toString().toUpperCase() + material + cfsrfidColor.getText().toString() + cfsrfidNumber.getText().toString() + cfsrfidReserve.getText().toString();
+        //String material = cfsrfidMaterial.getSelectedItem().toString().substring(0, 5);
+        String data = cfsrfidBatch.getText().toString().toUpperCase() + cfsrfidDateY.getText().toString() +
+            cfsrfidDateM.getText().toString() + cfsrfidDateD.getText().toString() + cfsrfidSupplier.getText().toString().toUpperCase() +
+            cfsrfidMaterialText.getText().toString() + cfsrfidColor.getText().toString() + cfsrfidColor.getText().toString() +
+            cfsrfidSerial.getText().toString() + cfsrfidReserve.getText().toString();
         //Pad the string so there's enough trailing zeros
         data = data + "00000000000000000000000000000000";
         Log.d("CFSRFID", "getDataString.rawdata: " + data);
@@ -1080,13 +1230,16 @@ public class MainMenu extends AppCompatActivity {
         if (cfsrfidSupplier.getText().toString().length()!=4){
             return false;
         }
-        if (material.length()!=5){
+        if (cfsrfidMaterialText.getText().toString().length()!=5){
             return false;
         }
         if (cfsrfidColor.getText().toString().length()!=7){
             return false;
         }
-        if (cfsrfidNumber.getText().toString().length()!=6){
+        if (cfsrfidLength.getText().toString().length()!=4){
+            return false;
+        }
+        if (cfsrfidSerial.getText().toString().length()!=6){
             return false;
         }
         //No need to check Reserve, we pad the end with 0s
@@ -1097,20 +1250,29 @@ public class MainMenu extends AppCompatActivity {
 
     public void onSetDefaults(View view)
     {
-        cfsrfidMaterial.setSelection(29);
+        cfsrfidMaterial.setSelection(30);
+        cfsrfidLengthSpin.setSelection(1);
         onRandomBatch(view);
         cfsrfidDateY.setText("24");
         cfsrfidDateM.setText("1");
         cfsrfidDateD.setText("20");
-        cfsrfidSupplier.setText("0A21");
+        //cfsrfidSupplier.setText("0A21");
         cfsrfidColor.setText("#0000FF");
-        cfsrfidNumber.setText("016500");
-        cfsrfidReserve.setText("0001000000000000000");
+        //cfsrfidLength.setText("0330");
+
+        //cfsrfidSerial.setText("000001");
+        cfsrfidReserve.setText("00000000000000");
     }
 
     public void onClickRead(View view) {
-        Toast.makeText(this, "Sorry, Reading tags isn't implemented yet :(",
-            Toast.LENGTH_LONG).show();
+        //setContentView(R.layout.activity_read_tag);
+
+        Intent intent = new Intent(this, KeyMapCreator.class);
+        intent.putExtra(KeyMapCreator.EXTRA_KEYS_DIR,
+            Common.getFile(Common.KEYS_DIR).getAbsolutePath());
+        intent.putExtra(KeyMapCreator.EXTRA_BUTTON_TEXT,
+            getString(R.string.action_create_key_map_and_read));
+        startActivityForResult(intent, KEY_MAP_CREATOR);
     }
 
     public void onAdvanced(View view){
@@ -1121,8 +1283,10 @@ public class MainMenu extends AppCompatActivity {
             cfsrfidDateM.setEnabled(true);
             cfsrfidDateD.setEnabled(true);
             cfsrfidSupplier.setEnabled(true);
-            cfsrfidNumber.setEnabled(true);
+            cfsrfidSerial.setEnabled(true);
+            cfsrfidLength.setEnabled(true);
             cfsrfidReserve.setEnabled(true);
+            cfsrfidMaterialText.setEnabled(true);
         }
         else {
             cfsrfidBatch.setEnabled(false);
@@ -1130,8 +1294,10 @@ public class MainMenu extends AppCompatActivity {
             cfsrfidDateM.setEnabled(false);
             cfsrfidDateD.setEnabled(false);
             cfsrfidSupplier.setEnabled(false);
-            cfsrfidNumber.setEnabled(false);
+            cfsrfidSerial.setEnabled(false);
+            cfsrfidLength.setEnabled(false);
             cfsrfidReserve.setEnabled(false);
+            cfsrfidMaterialText.setEnabled(false);
         }
     }
 
@@ -1209,12 +1375,27 @@ public class MainMenu extends AppCompatActivity {
         cfsrfidColor.setText("#" + envelope.getHexCode().substring(2, 8));
     }
     public void onRandomBatch(View view){
+
+        //Batch
         Random rand = new Random();
         int newBatch = rand.nextInt (4095);
         String newString = Integer.toHexString(newBatch).toUpperCase();
-        cfsrfidBatch.setText(newString);
-        if (cfsrfidBatch.getText().length()==1){cfsrfidBatch.setText(cfsrfidBatch.getText()+"00");}
-        if (cfsrfidBatch.getText().length()==2){cfsrfidBatch.setText(cfsrfidBatch.getText()+"0");}
+        newString = newString+"000";
+        cfsrfidBatch.setText(newString.substring(0,3));
+
+        //Serial
+        newBatch = rand.nextInt (1000000);
+        newString = Integer.toString(newBatch);
+        newString = "0000000"+newString;
+        int strlen = newString.length();
+        cfsrfidSerial.setText(newString.substring(strlen-6,strlen));
+
+        //Supplier
+        newBatch = rand.nextInt (65535);
+        newString = Integer.toHexString(newBatch).toUpperCase();
+        newString = newString+"0000";
+        cfsrfidSupplier.setText(newString.substring(0,4));
+
     }
 
     public void onColorUpdate(){
@@ -1230,7 +1411,82 @@ public class MainMenu extends AppCompatActivity {
         }
     }
 
+    public void onMatSpinUpdate(){
+        if (!(cfsrfidMaterial.getSelectedItemId()==0)){
+            String spin = cfsrfidMaterial.getSelectedItem().toString().substring(0,5);
+            String txt = cfsrfidMaterialText.getText().toString();
+            if (!(spin.equals(txt))){
+                cfsrfidMaterialText.setText(spin);
+            }
+        }
+    }
+    public void onMaterialTxtUpdate(){
+        String spin = cfsrfidMaterial.getSelectedItem().toString().substring(0,5);
+        String txt = cfsrfidMaterialText.getText().toString();
+        if (!(spin.equals(txt))){
+            int item = 0;
+            for (int i=0; i < cfsrfidMaterial.getAdapter().getCount(); i++) {
+                String thisItem = cfsrfidMaterial.getAdapter().getItem(i).toString();
+                if (thisItem.substring(0,5).equals(txt)){
+                    item = i;
+                }
+            }
+            cfsrfidMaterial.setSelection(item);
+        }
+    }
 
+    boolean updateLength = true;
+    public void onLenSpinUpdate(){
+        int selectedItem =  ((int) cfsrfidLengthSpin.getSelectedItemId());
+        if (updateLength) {
+            if (!(selectedItem == 0)) {
+                String spin = cfsrfidLengthSpin.getSelectedItem().toString().substring(0, 5);
+                String txt = cfsrfidLength.getText().toString();
+                if (!(spin.equals(txt))) {
+                    switch (selectedItem) {
+                        case 1:
+                            updateLength = false;
+                            cfsrfidLength.setText("0330");
+                            break;
+                        case 2:
+                            updateLength = false;
+                            cfsrfidLength.setText("0165");
+                            break;
+                        case 3:
+                            updateLength = false;
+                            cfsrfidLength.setText("0080");
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }else{
+            updateLength = true;}
+    }
+
+    public void onLengthTxtUpdate(){
+        if (updateLength) {
+            long spin = cfsrfidLengthSpin.getSelectedItemId();
+            int length = Integer.parseInt(cfsrfidLength.getText().toString());
+            //close enough to a kilo
+            if ((length > 300) && (length < 360)) {
+                updateLength = false;
+                cfsrfidLengthSpin.setSelection(1);
+            }
+            else if ((length > 145) && (length < 185)) {
+                //close enough to half kilo
+                updateLength = false;
+                cfsrfidLengthSpin.setSelection(2);
+            }
+            else if ((length > 70) && (length < 90)) {
+                //close enough to quarter kilo
+                updateLength = false;
+                cfsrfidLengthSpin.setSelection(3);
+            }
+        }else{
+            updateLength = true;}
+    }
 
     /**
      * Check the user input and, if necessary, possible issues with block 0.
