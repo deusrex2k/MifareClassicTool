@@ -83,6 +83,7 @@ import com.lot38designs.cfsrfid.Common;
 import com.lot38designs.cfsrfid.MCReader;
 import com.lot38designs.cfsrfid.R;
 import com.skydoves.colorpickerview.*;
+import com.skydoves.colorpickerview.flag.BubbleFlag;
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
 
 
@@ -186,7 +187,7 @@ public class MainMenu extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner.
         cfsrfidMaterial.setAdapter(adapter);
-        cfsrfidMaterial.setSelection(29);
+        cfsrfidMaterial.setSelection(30);
 
         // Create an ArrayAdapter using the string array and a default spinner layout.
         ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(
@@ -198,7 +199,7 @@ public class MainMenu extends AppCompatActivity {
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner.
         cfsrfidLengthSpin.setAdapter(adapter2);
-        cfsrfidLengthSpin.setSelection(0);
+        cfsrfidLengthSpin.setSelection(1);
 
         cfsrfidColor.addTextChangedListener(new TextWatcher() {
 
@@ -995,6 +996,26 @@ public class MainMenu extends AppCompatActivity {
     }
 
     /**
+     * Show the Help dialog.
+     */
+    public void onShowHelpDialog(View view) {
+        CharSequence styledText = HtmlCompat.fromHtml(
+            getString(R.string.dialog_cfsrfid_help, Common.getVersionCode()),
+            HtmlCompat.FROM_HTML_MODE_LEGACY);
+        AlertDialog ad = new AlertDialog.Builder(this)
+            .setTitle("Help and Tips")
+            .setMessage(styledText)
+            .setIcon(R.mipmap.ic_launcher)
+            .setPositiveButton(R.string.action_ok,
+                (dialog, which) -> {
+                    // Do nothing.
+                }).create();
+        ad.show();
+        // Make links clickable.
+        ((TextView)ad.findViewById(android.R.id.message)).setMovementMethod(
+            LinkMovementMethod.getInstance());
+    }
+    /**
      * Handle the user input from the general options menu
      * (e.g. show the about dialog).
      * @see #onShowAboutDialog()
@@ -1200,7 +1221,7 @@ public class MainMenu extends AppCompatActivity {
         //String material = cfsrfidMaterial.getSelectedItem().toString().substring(0, 5);
         String data = cfsrfidBatch.getText().toString().toUpperCase() + cfsrfidDateY.getText().toString() +
             cfsrfidDateM.getText().toString() + cfsrfidDateD.getText().toString() + cfsrfidSupplier.getText().toString().toUpperCase() +
-            cfsrfidMaterialText.getText().toString() + cfsrfidColor.getText().toString() + cfsrfidColor.getText().toString() +
+            cfsrfidMaterialText.getText().toString() + cfsrfidColor.getText().toString() + cfsrfidLength.getText().toString() +
             cfsrfidSerial.getText().toString() + cfsrfidReserve.getText().toString();
         //Pad the string so there's enough trailing zeros
         data = data + "00000000000000000000000000000000";
@@ -1258,7 +1279,7 @@ public class MainMenu extends AppCompatActivity {
         cfsrfidDateD.setText("20");
         //cfsrfidSupplier.setText("0A21");
         cfsrfidColor.setText("#0000FF");
-        //cfsrfidLength.setText("0330");
+        cfsrfidLength.setText("0330");
 
         //cfsrfidSerial.setText("000001");
         cfsrfidReserve.setText("00000000000000");
@@ -1315,6 +1336,8 @@ public class MainMenu extends AppCompatActivity {
                 return false;
         return true;
     }
+
+    ColorPickerDialog.Builder builder;
     public void onColorPicker(View view){
 
         //TODO: .setInitialColor(color);
@@ -1350,9 +1373,21 @@ public class MainMenu extends AppCompatActivity {
         }
         else {
 
+//            ColorPickerDialog.Builder builder =
+//                new ColorPickerDialog.Builder(this)
+//                    .setTitle("ColorPicker Dialog")
+//                    .setPreferenceName("Test")
+//                    .setPositiveButton(
+//                        getString(R.string.action_ok),
+//                        (ColorEnvelopeListener) (envelope, fromUser) -> colorSelected(envelope))
+//                    .setNegativeButton(
+//                        getString(R.string.action_cancel), (dialogInterface, i) -> dialogInterface.dismiss());
+//            builder.getColorPickerView().setFlagView(new BubbleFlag(this));
+//            builder.getColorPickerView().setPaletteDrawable(getDrawable(R.drawable.cfsrfidpalette));
+//            builder.show();
 
             //TODO: .setInitialColor(color);
-            ColorPickerDialog.Builder builder =
+            builder =
                 new ColorPickerDialog.Builder(this)
                     .setTitle("Creality Colors")
                     .setPreferenceName("Color")
@@ -1364,15 +1399,56 @@ public class MainMenu extends AppCompatActivity {
                     .setNegativeButton(
                         getString(R.string.action_cancel), (dialogInterface, i) -> dialogInterface.dismiss());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder.getColorPickerView().setPaletteDrawable(getDrawable(R.drawable.crealitycolors));
+                builder.getColorPickerView().setPaletteDrawable(getDrawable(R.drawable.cfsrfidpalette));
             }
             builder.show();
         }
     }
 
+    private String prependZeros(String input, int length){
+        String output = "0000000000000" + input;
+        output = output.substring(output.length()-length, output.length());
+        Log.d("CFSRFID", "prependZeros: " + output);
+        return output;
+    }
+    protected String rgbaToRGB(int rgb_background_red, int rgb_background_green, int rgb_background_blue,
+                               int rgba_color_red, int rgba_color_green, int rgba_color_blue, float alpha) {
+
+//        float red = (1 - alpha) * rgb_background_red + alpha * rgba_color_red;
+//        float green = (1 - alpha) * rgb_background_green + alpha * rgba_color_green;
+//        float blue = (1 - alpha) * rgb_background_blue + alpha * rgba_color_blue;
+
+        String redStr = prependZeros(Integer.toHexString((int) rgba_color_red).toUpperCase(),2);
+        String greenStr = prependZeros(Integer.toHexString((int) rgba_color_green).toUpperCase(),2);
+        String blueStr = prependZeros(Integer.toHexString((int) rgba_color_blue).toUpperCase(),2);
+
+        String colorHex = "#" + redStr + greenStr + blueStr;
+
+        //return Color.parseColor(colorHex);
+        return colorHex;
+    }
+
     private void colorSelected (ColorEnvelope envelope){
+
         Log.d("CFSRFID","colorSelected:" + envelope.getHexCode());
-        cfsrfidColor.setText("#" + envelope.getHexCode().substring(2, 8));
+
+        int argb = builder.getColorPickerView().getPureColor();
+
+        int alpha = 255;
+        int red = 0xFF & (argb >> 16);
+        int green = 0xFF & (argb >> 8);
+        int blue = 0xFF & (argb >> 0);
+        float alphaFloat = (float)alpha / 255;
+
+        String colorStr = rgbaToRGB(255, 255, 255, red, green, blue, alphaFloat);
+        Log.d("CFSRFID", "ColorA: " + envelope.getArgb()[0]);
+        Log.d("CFSRFID", "ColorR: " + envelope.getArgb()[1]);
+        Log.d("CFSRFID", "ColorG: " + envelope.getArgb()[2]);
+        Log.d("CFSRFID", "ColorB: " + envelope.getArgb()[3]);
+
+        Log.d("CFSRFID", "colorStr: " + colorStr);
+        //cfsrfidColor.setText("#" + envelope.getHexCode().substring(2, 8));
+        cfsrfidColor.setText(colorStr);
     }
     public void onRandomBatch(View view){
 
@@ -1483,6 +1559,9 @@ public class MainMenu extends AppCompatActivity {
                 //close enough to quarter kilo
                 updateLength = false;
                 cfsrfidLengthSpin.setSelection(3);
+            } else {
+                updateLength = false;
+                cfsrfidLengthSpin.setSelection(0);
             }
         }else{
             updateLength = true;}

@@ -716,6 +716,21 @@
         NXP\'s specifications.
         \n\nProceed at your own risk!</string>
 
+    <string name="dialog_cfsrfid_help">
+        Each spool needs two identical tags - one on each side<br />
+        <br />
+        Each spool should have different Batch, Serial, and Supplier. The Random button will randomize these.<br />
+        <b>Note:</b> In future versions the Supplier entry will be a drop down to allow you to select different manufacturers.<br />
+        <br />
+        There are 3 color palettes - 2 in \"Basic\" and 1 in \"Advanced\". If you want to have the CFS automatically switch when 1 color runs out, you will need to match the colors - so it might make sense to use the Creality colors so you can also select them on the printer. Otherwise, just be consistent.<br />
+        <b>Note</b> The Creality colors might not be perfect, let me know if one of them is wrong<br />
+        <b>Note</b> The Basic Color Palette will change in a future version to have better color options. So don\'t be surprised when it changes<br />
+        <br />
+        The easiest way to ensure colors and settings match is to read a tag and then randomize the Batch, Serial, and Supplier entries.<br />
+        <br />
+        When you use up a spool, you can reuse the tags.
+    </string>
+
     <!-- Hints -->
     <string name="hint_hex_16_byte">HEX, 16 bytes (e.g. 0A4F&#8230;)</string>
     <string name="hint_hex_3_byte">HEX, 3 bytes</string>

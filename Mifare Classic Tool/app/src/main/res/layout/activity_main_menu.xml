@@ -93,21 +93,21 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/button5"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/btnRandom"
+                        android:layout_width="20dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
-                        android:layout_weight="50"
+                        android:layout_weight="1"
                         android:onClick="onRandomBatch"
-                        app:icon="@android:drawable/stat_notify_sync_noanim"
-                        tools:text="Randomize" />
+                        app:icon="@android:drawable/stat_notify_sync_noanim" />
 
                     <Button
                         android:id="@+id/button4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
-                        android:layout_weight="5"
+                        android:layout_weight="2"
+                        android:onClick="onShowHelpDialog"
                         android:text="Help" />
 
                     <com.google.android.material.chip.Chip
@@ -334,7 +334,7 @@
                         android:height="48dp"
                         android:ems="10"
                         android:inputType="text"
-                        android:text="016500" />
+                        android:text="0165" />
                 </LinearLayout>
 
                 <View
