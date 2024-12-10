@@ -23,6 +23,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/menuFeedback"
+        android:title="Provide Feedback..." />
+    <item
         android:id="@+id/menuMainPreferences"
         android:icon="@drawable/kofi_symbol"
         android:showAsAction="ifRoom"

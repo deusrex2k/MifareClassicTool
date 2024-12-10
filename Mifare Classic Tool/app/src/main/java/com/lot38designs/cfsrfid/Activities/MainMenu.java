@@ -40,12 +40,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -999,22 +1001,41 @@ public class MainMenu extends AppCompatActivity {
      * Show the Help dialog.
      */
     public void onShowHelpDialog(View view) {
-        CharSequence styledText = HtmlCompat.fromHtml(
-            getString(R.string.dialog_cfsrfid_help, Common.getVersionCode()),
-            HtmlCompat.FROM_HTML_MODE_LEGACY);
-        AlertDialog ad = new AlertDialog.Builder(this)
-            .setTitle("Help and Tips")
-            .setMessage(styledText)
-            .setIcon(R.mipmap.ic_launcher)
-            .setPositiveButton(R.string.action_ok,
-                (dialog, which) -> {
-                    // Do nothing.
-                }).create();
-        ad.show();
-        // Make links clickable.
-        ((TextView)ad.findViewById(android.R.id.message)).setMovementMethod(
-            LinkMovementMethod.getInstance());
-    }
+//        LayoutInflater inflater = requireActivty
+//        CharSequence styledText = Html.fromHtml(
+//            getString(R.string.dialog_cfsrfid_help));
+//        AlertDialog ad = new AlertDialog.Builder(this)
+//            .setTitle("Help and Tips")
+//            //.setMessage(styledText)
+//            .setView(inflate)
+//            .setIcon(R.mipmap.ic_launcher)
+//            .setPositiveButton(R.string.action_ok,
+//                (dialog, which) -> {
+//                    // Do nothing.
+//                }).create();
+//        ad.show();
+//        // Make links clickable.
+//        ((TextView)ad.findViewById(android.R.id.message)).setMovementMethod(
+//            LinkMovementMethod.getInstance());
+        Context context = view.getContext();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        // Get the layout inflater.
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+
+        // Inflate and set the layout for the dialog.
+        // Pass null as the parent view because it's going in the dialog layout.
+        builder.setView(inflater.inflate(R.layout.dialog_help, null))
+            // Add action buttons
+            .setPositiveButton(R.string.action_ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {
+                    // do nothing
+                }
+            })
+            ;
+        builder.create();
+        builder.show();
+        }
     /**
      * Handle the user input from the general options menu
      * (e.g. show the about dialog).
@@ -1031,8 +1052,22 @@ public class MainMenu extends AppCompatActivity {
         } else if (id == R.id.menuMainAbout) {
             onShowAboutDialog();
             return true;
+        } else if (id == R.id.menuFeedback){
+            onPopupFeedback();
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void onPopupFeedback(){
+        try {
+            Intent myIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.google.com/forms/d/e/1FAIpQLSeQICpeYOV-7p2vHUvHGuvbNdFEb2tuVn05R8xV9-h7zXJbqA/viewform"));
+            startActivity(myIntent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, "No application can handle this request."
+                + " Please install a webbrowser",  Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
     }
 
     /**
