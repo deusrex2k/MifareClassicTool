@@ -11,8 +11,8 @@ android {
         applicationId "com.lot38designs.cfsrfid"
         minSdk 23
         targetSdk 34
-        versionCode 69
-        versionName '0.2'
+        versionCode 71
+        versionName '0.3.1'
     }
 
     androidResources {

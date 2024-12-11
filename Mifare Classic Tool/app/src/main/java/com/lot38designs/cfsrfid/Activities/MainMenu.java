@@ -1358,10 +1358,10 @@ public class MainMenu extends AppCompatActivity {
     }
 
     private boolean checkColor(String str){
-        if (str.charAt(0) != '#')
+        if (!(str.length() == 7))
             return false;
 
-        if (!(str.length() == 7))
+        if (str.charAt(0) != '#')
             return false;
 
         for (int i = 1; i < str.length(); i++)
@@ -1576,27 +1576,38 @@ public class MainMenu extends AppCompatActivity {
             updateLength = true;}
     }
 
+    public boolean isInteger( String input ) {
+        try {
+            Integer.parseInt( input );
+            return true;
+        }
+        catch(NumberFormatException nfe) {
+            return false;
+        }
+    }
+
     public void onLengthTxtUpdate(){
         if (updateLength) {
-            long spin = cfsrfidLengthSpin.getSelectedItemId();
-            int length = Integer.parseInt(cfsrfidLength.getText().toString());
-            //close enough to a kilo
-            if ((length > 300) && (length < 360)) {
-                updateLength = false;
-                cfsrfidLengthSpin.setSelection(1);
-            }
-            else if ((length > 145) && (length < 185)) {
-                //close enough to half kilo
-                updateLength = false;
-                cfsrfidLengthSpin.setSelection(2);
-            }
-            else if ((length > 70) && (length < 90)) {
-                //close enough to quarter kilo
-                updateLength = false;
-                cfsrfidLengthSpin.setSelection(3);
-            } else {
-                updateLength = false;
-                cfsrfidLengthSpin.setSelection(0);
+            if (isInteger(cfsrfidLength.getText().toString())) {
+                long spin = cfsrfidLengthSpin.getSelectedItemId();
+
+                int length = Integer.parseInt(cfsrfidLength.getText().toString());
+                //close enough to a kilo
+                if ((length > 300) && (length < 360)) {
+                    updateLength = false;
+                    cfsrfidLengthSpin.setSelection(1);
+                } else if ((length > 145) && (length < 185)) {
+                    //close enough to half kilo
+                    updateLength = false;
+                    cfsrfidLengthSpin.setSelection(2);
+                } else if ((length > 70) && (length < 90)) {
+                    //close enough to quarter kilo
+                    updateLength = false;
+                    cfsrfidLengthSpin.setSelection(3);
+                } else {
+                    updateLength = false;
+                    cfsrfidLengthSpin.setSelection(0);
+                }
             }
         }else{
             updateLength = true;}
@@ -1619,7 +1630,12 @@ public class MainMenu extends AppCompatActivity {
         //if (!checkSectorAndBlock(mSectorTextBlock, mBlockTextBlock)) {
         //    return;
         //}
+
         String data = getDataString();
+        if (data.length()<96){
+            return;
+        }
+
         String data1 = data.substring(0,32);
         String data2 = data.substring(32,64);
         String data3 = data.substring(64,96);
