@@ -1224,32 +1224,38 @@ public class MainMenu extends AppCompatActivity {
         Log.d("CFSRFID", "parseTagdata: " + dump[8]);
         String hex = dump[6]+dump[7]+dump[8];
         StringBuilder fullAscii = new StringBuilder();
-        for (int i = 0; i < hex.length(); i+=2) {
-            String str = hex.substring(i, i+2);
-            fullAscii.append((char)Integer.parseInt(str, 16));
-        }
-        cfsrfidBatch.setText(fullAscii.substring(0,3));
-        cfsrfidDateY.setText(fullAscii.substring(3,5));
-        cfsrfidDateM.setText(fullAscii.substring(5,6));
-        cfsrfidDateD.setText(fullAscii.substring(6,8));
-        cfsrfidSupplier.setText(fullAscii.substring(8,12));
 
-        String material = (fullAscii.substring(12,17));
-        int item = 0;
-        for (int i=0; i < cfsrfidMaterial.getAdapter().getCount(); i++) {
-            String thisItem = cfsrfidMaterial.getAdapter().getItem(i).toString();
-            if (thisItem.substring(0,5).equals(material)){
-                item = i;
+        //TODO: Validate hex is the format we expect and not a random tag
+        try {
+            for (int i = 0; i < hex.length(); i += 2) {
+                String str = hex.substring(i, i + 2);
+                fullAscii.append((char) Integer.parseInt(str, 16));
             }
+            cfsrfidBatch.setText(fullAscii.substring(0, 3));
+            cfsrfidDateY.setText(fullAscii.substring(3, 5));
+            cfsrfidDateM.setText(fullAscii.substring(5, 6));
+            cfsrfidDateD.setText(fullAscii.substring(6, 8));
+            cfsrfidSupplier.setText(fullAscii.substring(8, 12));
+
+            String material = (fullAscii.substring(12, 17));
+            int item = 0;
+            for (int i = 0; i < cfsrfidMaterial.getAdapter().getCount(); i++) {
+                String thisItem = cfsrfidMaterial.getAdapter().getItem(i).toString();
+                if (thisItem.substring(0, 5).equals(material)) {
+                    item = i;
+                }
+            }
+            cfsrfidMaterial.setSelection(item);
+            cfsrfidMaterialText.setText(material);
+
+            cfsrfidColor.setText(fullAscii.substring(17, 24));
+            cfsrfidLength.setText(fullAscii.substring(24, 28));
+            cfsrfidSerial.setText(fullAscii.substring(28, 34));
+            cfsrfidReserve.setText(fullAscii.substring(34, 48));
+        }catch(Exception e){
+            Toast.makeText(this, "Error parsing tag data.",
+                Toast.LENGTH_LONG).show();
         }
-        cfsrfidMaterial.setSelection(item);
-        cfsrfidMaterialText.setText(material);
-
-        cfsrfidColor.setText(fullAscii.substring(17,24));
-        cfsrfidLength.setText(fullAscii.substring(24,28));
-        cfsrfidSerial.setText(fullAscii.substring(28, 34));
-        cfsrfidReserve.setText(fullAscii.substring(34,48));
-
     }
     private String getDataString(){
 
