@@ -24,7 +24,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/relativeLayoutMain"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context="Activities.WriteCFSRFIDTag">
 
 
@@ -59,16 +59,6 @@
                         android:onClick="onClickRead"
                         android:text="Read"
                         android:visibility="visible" />
-
-                    <Button
-                        android:id="@+id/button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:layout_weight="1"
-                        android:height="69dp"
-                        android:onClick="onSetDefaults"
-                        android:text="Reset" />
 
                     <Button
                         android:id="@+id/button3"
@@ -286,6 +276,12 @@
                     android:orientation="horizontal">
 
                     <Spinner
+                        android:id="@+id/spinnerBrand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="5" />
+
+                    <Spinner
                         android:id="@+id/cfsrfidMaterial"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -400,6 +396,16 @@
 
 
             </LinearLayout>
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:height="69dp"
+                android:onClick="onSetDefaults"
+                android:text="Reset to Default Values" />
         </LinearLayout>
     </ScrollView>
 

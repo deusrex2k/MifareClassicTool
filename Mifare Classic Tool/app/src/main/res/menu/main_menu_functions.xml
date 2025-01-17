@@ -23,6 +23,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
+        android:id="@+id/menuMaterials"
+        android:title="Load Materials..." />
+    <item
         android:id="@+id/menuFeedback"
         android:title="Provide Feedback..." />
     <item

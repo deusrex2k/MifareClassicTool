@@ -1055,6 +1055,9 @@ public class MainMenu extends AppCompatActivity {
         } else if (id == R.id.menuFeedback){
             onPopupFeedback();
             return true;
+        } else if (id == R.id.menuMaterials){
+            onShowMaterials();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -1070,6 +1073,14 @@ public class MainMenu extends AppCompatActivity {
         }
     }
 
+    /**
+     * Show the Materials Dialog again
+     */
+    private void onShowMaterials() {
+        //Intent intent = new Intent(this, WriteTag.class);
+        Intent intent = new Intent(this, Materials.class);
+        startActivity(intent);
+    }
     /**
      * Handle (start) the selected tool from the tools menu.
      * @see TagInfoTool

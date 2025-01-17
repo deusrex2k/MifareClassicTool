@@ -11,8 +11,8 @@ android {
         applicationId "com.lot38designs.cfsrfid"
         minSdk 23
         targetSdk 34
-        versionCode 71
-        versionName '0.3.1'
+        versionCode 72
+        versionName '0.3.2'
     }
 
     androidResources {
@@ -38,5 +38,8 @@ dependencies {
     implementation "androidx.appcompat:appcompat:1.6.1"
     implementation "com.github.skydoves:colorpickerview:2.3.0"
     implementation 'com.google.android.material:material:1.12.0'
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+
 
 }
