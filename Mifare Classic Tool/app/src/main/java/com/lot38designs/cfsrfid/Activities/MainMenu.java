@@ -73,11 +73,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.security.Provider;
+import java.security.Security;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.navigation.NavigationBarView;
@@ -87,6 +93,10 @@ import com.lot38designs.cfsrfid.R;
 import com.skydoves.colorpickerview.*;
 import com.skydoves.colorpickerview.flag.BubbleFlag;
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
+
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 
 /**
@@ -127,6 +137,7 @@ public class MainMenu extends AppCompatActivity {
     private EditText cfsrfidSupplier;
     private Spinner cfsrfidMaterial;
     private EditText cfsrfidColor;
+    private EditText cfsrfidColorPrefix;
     private EditText cfsrfidLength;
     private EditText cfsrfidReserve;
     private Button cfsrfidButtonColor;
@@ -134,6 +145,9 @@ public class MainMenu extends AppCompatActivity {
     private EditText cfsrfidMaterialText;
     private EditText cfsrfidSerial;
     private Chip chipAdvanced;
+    private Chip cfsrfidChipEncrypt;
+
+    private EditText cfsrfidCardKey;
 
     /**
      * Nodes (stats) MCT passes through during its startup.
@@ -159,20 +173,23 @@ public class MainMenu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
-        cfsrfidBatch = findViewById(R.id.cfsrfidBatch);
-        cfsrfidDateY = findViewById(R.id.cfsrfidDateY);
-        cfsrfidDateM = findViewById(R.id.cfsrfidDateM);
-        cfsrfidDateD = findViewById(R.id.cfsrfidDateD);
-        cfsrfidSupplier = findViewById(R.id.cfsrfidSupplier);
-        cfsrfidMaterial = findViewById(R.id.cfsrfidMaterial);
+        cfsrfidBatch = findViewById(R.id.cfsrfid_batch);
+        cfsrfidDateY = findViewById(R.id.cfsrfid_date_y);
+        cfsrfidDateM = findViewById(R.id.cfsrfid_date_m);
+        cfsrfidDateD = findViewById(R.id.cfsrfid_date_d);
+        cfsrfidSupplier = findViewById(R.id.cfsrfid_supplier);
+        cfsrfidMaterial = findViewById(R.id.cfsrfid_material);
         cfsrfidColor = findViewById(R.id.cfsrfidColor);
-        cfsrfidLength = findViewById(R.id.cfsrfidLength);
+        cfsrfidColorPrefix = findViewById(R.id.cfsrfid_colorprefix);
+        cfsrfidLength = findViewById(R.id.cfsrfid_length);
         cfsrfidReserve = findViewById(R.id.cfsrfidReserve);
         cfsrfidButtonColor = findViewById(R.id.cfsrfidButtonColor);
-        chipAdvanced = findViewById(R.id.chipAdvanced);
-        cfsrfidLengthSpin = findViewById(R.id.cfsrfidLengthSpin);
-        cfsrfidMaterialText = findViewById(R.id.cfsrfidMaterialText);
-        cfsrfidSerial = findViewById(R.id.cfsrfidSerial);
+        chipAdvanced = findViewById(R.id.chip_advanced);
+        cfsrfidLengthSpin = findViewById(R.id.cfsrfid_length_spin);
+        cfsrfidMaterialText = findViewById(R.id.cfsrfid_material_text);
+        cfsrfidSerial = findViewById(R.id.cfsrfid_serial);
+        cfsrfidChipEncrypt = findViewById(R.id.cfsrfid_encrypt);
+        cfsrfidCardKey = findViewById(R.id.cfsrfidCardKey);
 
         onAdvanced(null);
         onColorUpdate();
@@ -1159,6 +1176,7 @@ public class MainMenu extends AppCompatActivity {
      */
     private void readTag() {
         final MCReader reader = Common.checkForTagAndCreateReader(this);
+
         if (reader == null) {
             return;
         }
@@ -1222,8 +1240,23 @@ public class MainMenu extends AppCompatActivity {
         Log.d("CFSRFID", "parseTagdata: " + dump[6]);
         Log.d("CFSRFID", "parseTagdata: " + dump[7]);
         Log.d("CFSRFID", "parseTagdata: " + dump[8]);
+        Log.d("CFSRFID", "parseTagdata: " + dump[9]);
         String hex = dump[6]+dump[7]+dump[8];
         StringBuilder fullAscii = new StringBuilder();
+
+        String kdfkey = dump[9].substring(0,12);
+        cfsrfidCardKey.setText(kdfkey);
+
+        //TODO: Change this to check that everything is a proper HEX value
+        // Check if the tag is encrypted by checking a few characters
+        String test1 = hex.substring(6,8); //Should be the first number of year (24, 25, 26, etc). Hopefully someone writes a better version of this check before 2030...
+        Log.d("CFSRFID", "parseTagdata.test1: " + test1); //ASCII value of 2 is 32
+        String test2 = hex.substring(34,36); //Should be the # or 0 before a the 6 character color code
+        Log.d("CFSRFID", "parseTagdata.test1: " + test2);//ASCII value of 0 and # is 30 & 23
+
+        if ((!test1.equals("32"))||((!test2.equals("30"))&&(!test2.equals("23")))){ //ASCII value, see mapping above
+            hex = decryptTag(hex);
+        }
 
         //TODO: Validate hex is the format we expect and not a random tag
         try {
@@ -1248,28 +1281,70 @@ public class MainMenu extends AppCompatActivity {
             cfsrfidMaterial.setSelection(item);
             cfsrfidMaterialText.setText(material);
 
-            cfsrfidColor.setText(fullAscii.substring(17, 24));
+            //cfsrfidColorPrefix.setText(fullAscii.substring(18, 19));
+            cfsrfidColor.setText(fullAscii.substring(18, 24));
             cfsrfidLength.setText(fullAscii.substring(24, 28));
             cfsrfidSerial.setText(fullAscii.substring(28, 34));
             cfsrfidReserve.setText(fullAscii.substring(34, 48));
         }catch(Exception e){
             Toast.makeText(this, "Error parsing tag data.",
                 Toast.LENGTH_LONG).show();
+            Log.d("CFSRFID", "parseTagdata: " + e.toString());
         }
     }
+
+    private String decryptTag(String hex) {
+
+        SecretKey key = new SecretKeySpec("H@CFkRnz@KAtBJp2".getBytes(),"AES"); //keygen.generateKey();
+
+        try {
+            Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            byte[] ciphertext = cipher.doFinal(hexStringToByteArray(hex));
+            byte[] iv = cipher.getIV();
+            Log.d("CFSRFID", "decryptTag: " + bytesToHex(ciphertext));
+            return bytesToHex(ciphertext);
+        }
+        catch(Exception e){
+            return null;
+        }
+    }
+
     private String getDataString(){
 
         //String material = cfsrfidMaterial.getSelectedItem().toString().substring(0, 5);
         String data = cfsrfidBatch.getText().toString().toUpperCase() + cfsrfidDateY.getText().toString() +
             cfsrfidDateM.getText().toString() + cfsrfidDateD.getText().toString() + cfsrfidSupplier.getText().toString().toUpperCase() +
-            cfsrfidMaterialText.getText().toString() + cfsrfidColor.getText().toString() + cfsrfidLength.getText().toString() +
+            cfsrfidMaterialText.getText().toString() + cfsrfidColorPrefix.getText().toString() + cfsrfidColor.getText().toString() + cfsrfidLength.getText().toString() +
             cfsrfidSerial.getText().toString() + cfsrfidReserve.getText().toString();
         //Pad the string so there's enough trailing zeros
         data = data + "00000000000000000000000000000000";
         Log.d("CFSRFID", "getDataString.rawdata: " + data);
         data = toHex(data);
         Log.d("CFSRFID", "getDataString.hexdata: " + data);
+        data = data.substring(0,96);
+        Log.d("CFSRFID", "getDataString.truncated: " + data);
+        if (cfsrfidChipEncrypt.isChecked())
+        {
+            data = encryptData(data);
+        }
         return data;
+    }
+
+    private String encryptData(String data) {
+        SecretKey key = new SecretKeySpec("H@CFkRnz@KAtBJp2".getBytes(),"AES"); //keygen.generateKey();
+
+        try {
+            Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            byte[] ciphertext = cipher.doFinal(hexStringToByteArray(data));
+            byte[] iv = cipher.getIV();
+            Log.d("CFSRFID", "EncryptTag: " + bytesToHex(ciphertext));
+            return bytesToHex(ciphertext);
+        }
+        catch(Exception e){
+            return null;
+        }
     }
 
     private boolean goodData(){
@@ -1295,7 +1370,7 @@ public class MainMenu extends AppCompatActivity {
         if (cfsrfidMaterialText.getText().toString().length()!=5){
             return false;
         }
-        if (cfsrfidColor.getText().toString().length()!=7){
+        if (cfsrfidColor.getText().toString().length()!=6){
             return false;
         }
         if (cfsrfidLength.getText().toString().length()!=4){
@@ -1304,10 +1379,34 @@ public class MainMenu extends AppCompatActivity {
         if (cfsrfidSerial.getText().toString().length()!=6){
             return false;
         }
+        if (cfsrfidColorPrefix.getText().toString().length()!=1){
+            return false;
+        }
         //No need to check Reserve, we pad the end with 0s
         //if (cfsrfidReserve.getText().toString().length()!=3){return false;}
 
         return true;
+    }
+
+    public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                + Character.digit(s.charAt(i+1), 16));
+        }
+        return data;
+    }
+
+    private static final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
+    public static String bytesToHex(byte[] bytes) {
+        byte[] hexChars = new byte[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars, StandardCharsets.UTF_8);
     }
 
     public void onSetDefaults(View view)
@@ -1319,11 +1418,35 @@ public class MainMenu extends AppCompatActivity {
         cfsrfidDateM.setText("1");
         cfsrfidDateD.setText("20");
         //cfsrfidSupplier.setText("0A21");
-        cfsrfidColor.setText("#0000FF");
+        cfsrfidColor.setText("0000FF");
+        cfsrfidColorPrefix.setText("0");
         cfsrfidLength.setText("0330");
 
         //cfsrfidSerial.setText("000001");
         cfsrfidReserve.setText("00000000000000");
+
+
+        byte[] plaintext = hexStringToByteArray("3A14ACF1"+"3A14ACF1"+"3A14ACF1"+"3A14ACF1");
+
+
+        //KeyGenerator keygen = KeyGenerator.getInstance("AES");
+        //keygen.init(256);
+        SecretKey key = new SecretKeySpec("q3bu^t1nqfZ(pf$1".getBytes(),"AES"); //keygen.generateKey();
+
+        try {
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            byte[] ciphertext = cipher.doFinal(plaintext);
+            byte[] iv = cipher.getIV();
+
+            Log.d("CFSRFID", "generateKDF: " + bytesToHex(Arrays.copyOfRange(ciphertext, 0,6)));
+
+        }
+        catch(Exception e){
+            Log.d("CFSRFID", "generateKDF error: " + e.toString());
+        }
+
+        decryptTag("57F25B78076D4C1797B1BE35CA269540D80EE25C0E3EDD25A3C1079BC52DD3ACA2731DB0857A7AADD72A75294A6EA65B");
     }
 
     public void onClickRead(View view) {
@@ -1349,6 +1472,7 @@ public class MainMenu extends AppCompatActivity {
             cfsrfidLength.setEnabled(true);
             cfsrfidReserve.setEnabled(true);
             cfsrfidMaterialText.setEnabled(true);
+            cfsrfidColorPrefix.setEnabled(true);
         }
         else {
             cfsrfidBatch.setEnabled(false);
@@ -1360,17 +1484,18 @@ public class MainMenu extends AppCompatActivity {
             cfsrfidLength.setEnabled(false);
             cfsrfidReserve.setEnabled(false);
             cfsrfidMaterialText.setEnabled(false);
+            cfsrfidColorPrefix.setEnabled(false);
         }
     }
 
     private boolean checkColor(String str){
-        if (!(str.length() == 7))
+        if (!(str.length() == 6))
             return false;
 
-        if (str.charAt(0) != '#')
-            return false;
+//        if ((str.charAt(0) != '#')&&(str.charAt(0) != '0'))
+//            return false;
 
-        for (int i = 1; i < str.length(); i++)
+        for (int i = 0; i < str.length(); i++)
             if (!((str.charAt(i) >= '0' && str.charAt(i) <= 9)
                 || (str.charAt(i) >= 'a' && str.charAt(i) <= 'f')
                 || (str.charAt(i) >= 'A' || str.charAt(i) <= 'F')))
@@ -1390,7 +1515,7 @@ public class MainMenu extends AppCompatActivity {
                     @Override
                     public void onColorSelected(ColorEnvelope envelope, boolean fromUser) {
                         //setLayoutColor(envelope);
-                        cfsrfidColor.setText("#" + envelope.getHexCode().substring(2,8));
+                        cfsrfidColor.setText(envelope.getHexCode().substring(2,8));
                     }
                 })
             .setNegativeButton(getString(R.string.action_cancel),
@@ -1489,7 +1614,7 @@ public class MainMenu extends AppCompatActivity {
 
         Log.d("CFSRFID", "colorStr: " + colorStr);
         //cfsrfidColor.setText("#" + envelope.getHexCode().substring(2, 8));
-        cfsrfidColor.setText(colorStr);
+        cfsrfidColor.setText(colorStr.substring(1));
     }
     public void onRandomBatch(View view){
 
@@ -1518,12 +1643,17 @@ public class MainMenu extends AppCompatActivity {
     public void onColorUpdate(){
         if (checkColor(cfsrfidColor.getText().toString())) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                int red = Integer.decode("0x" +cfsrfidColor.getText().toString().substring(1,3));
-                int green = Integer.decode("0x" +cfsrfidColor.getText().toString().substring(3,5));
-                int blue = Integer.decode("0x" +cfsrfidColor.getText().toString().substring(5,7));
-                int color = Color.rgb(red, green, blue);
-                ColorDrawable cd = new ColorDrawable(color);
-                cfsrfidButtonColor.setForeground(cd);
+                try {
+                    int red = Integer.decode("0x" + cfsrfidColor.getText().toString().substring(0, 2));
+                    int green = Integer.decode("0x" + cfsrfidColor.getText().toString().substring(2, 4));
+                    int blue = Integer.decode("0x" + cfsrfidColor.getText().toString().substring(4, 6));
+                    int color = Color.rgb(red, green, blue);
+                    ColorDrawable cd = new ColorDrawable(color);
+                    cfsrfidButtonColor.setForeground(cd);
+                }
+                catch (Exception e){
+
+                }
             }
         }
     }
@@ -1672,26 +1802,27 @@ public class MainMenu extends AppCompatActivity {
         }
 
         if (block == 3 || block == 15) {
+            createKeyMapForBlock(sector, false);
             // Sector Trailer.
-            int acCheck = checkAccessConditions(data, true);
-            if (acCheck == 1) {
-                // Invalid Access Conditions. Abort.
-                return;
-            }
-            // Warning. This is a sector trailer.
-            new AlertDialog.Builder(this)
-                .setTitle(R.string.dialog_sector_trailer_warning_title)
-                .setMessage(R.string.dialog_sector_trailer_warning)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(R.string.action_i_know_what_i_am_doing,
-                    (dialog, which) -> {
-                        // Show key map creator.
-                        createKeyMapForBlock(sector, false);
-                    })
-                .setNegativeButton(R.string.action_cancel,
-                    (dialog, id) -> {
-                        // Do nothing.
-                    }).show();
+//            int acCheck = checkAccessConditions(data, true);
+//            if (acCheck == 1) {
+//                // Invalid Access Conditions. Abort.
+//                return;
+//            }
+//            // Warning. This is a sector trailer.
+//            new AlertDialog.Builder(this)
+//                .setTitle(R.string.dialog_sector_trailer_warning_title)
+//                .setMessage(R.string.dialog_sector_trailer_warning)
+//                .setIcon(android.R.drawable.ic_dialog_alert)
+//                .setPositiveButton(R.string.action_i_know_what_i_am_doing,
+//                    (dialog, which) -> {
+//                        // Show key map creator.
+//                        createKeyMapForBlock(sector, false);
+//                    })
+//                .setNegativeButton(R.string.action_cancel,
+//                    (dialog, id) -> {
+//                        // Do nothing.
+//                    }).show();
         } else if (sector == 0 && block == 0) {
             // Manufacturer block.
             // Is block 0 valid? Display warning.
@@ -1939,7 +2070,26 @@ public class MainMenu extends AppCompatActivity {
             startActivityForResult(intent, CKM_WRITE_BLOCK);
         }
     }
+    private String generateKDF(byte[] uid)  {
+        String uid_s = bytesToHex(uid);
+        byte[] plaintext = hexStringToByteArray(uid_s+uid_s+uid_s+uid_s);
 
+        SecretKey key = new SecretKeySpec("q3bu^t1nqfZ(pf$1".getBytes(),"AES"); //keygen.generateKey();
+
+        try {
+            Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            byte[] ciphertext = cipher.doFinal(plaintext);
+            byte[] iv = cipher.getIV();
+            Log.d("CFSRFID", "generateKDF: " + bytesToHex(Arrays.copyOfRange(ciphertext, 0,6)));
+            return bytesToHex(Arrays.copyOfRange(ciphertext, 0,6));
+        }
+        catch(Exception e){
+            return null;
+        }
+
+
+    }
     /**
      * Called from {@link #onActivityResult(int, int, Intent)}
      * after a key map was created, this method tries to write the given
@@ -1952,18 +2102,31 @@ public class MainMenu extends AppCompatActivity {
         String data1 = data.substring(0,32);
         String data2 = data.substring(32,64);
         String data3 = data.substring(64,96);
+        //KDF / encryption
+        String data4;
+        if (cfsrfidChipEncrypt.isChecked()) {
+            data4 = generateKDF(Common.getUID());
+        }
+        else {
+            data4 = "FFFFFFFFFFFF";
+        }
+
+        cfsrfidCardKey.setText(data4);
+        data4 = data4 + "FF078069" + data4;
+
         Log.d("CFSRFID", "writeBlock.data1: " + data1);
         Log.d("CFSRFID", "writeBlock.data2: " + data2);
         Log.d("CFSRFID", "writeBlock.data3: " + data3);
+        Log.d("CFSRFID", "writeBlock.data4: " + data4); //Updating sector trailer/security could brick a tag :(
         //TODO: Actually write
         writeBlockCFSRFID(data1,0);
         writeBlockCFSRFID(data2,1);
         writeBlockCFSRFID(data3,2);
+        writeBlockCFSRFID(data4, 3);
+
     }
 
     private void writeBlockCFSRFID(String data, int block) {
-
-
 
         MCReader reader = Common.checkForTagAndCreateReader(this);
         if (reader == null) {

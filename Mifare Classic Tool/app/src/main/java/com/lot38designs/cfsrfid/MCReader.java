@@ -29,6 +29,9 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,6 +40,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.lot38designs.cfsrfid.Activities.Preferences.Preference;
 import com.lot38designs.cfsrfid.Common.Operation;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Provides functions to read/write/analyze a MIFARE Classic tag.
@@ -823,28 +834,13 @@ public class MCReader {
      * @return Number of keys loaded. -1 on error.
      */
     public int setKeyFile(File[] keyFiles, Context context) {
-        if (keyFiles == null || keyFiles.length == 0 || context == null) {
-            return -1;
-        }
+        //For Creality KDF - We are going to ignore the keyFiles and build our own key list - all FFFFs and the KDF key
         HashSet<String> keys = new HashSet<>();
-        for (File file : keyFiles) {
-            String[] lines = Common.readFileLineByLine(file, false, context);
-            if (lines != null) {
-                for (String line : lines) {
-                    if (!line.isEmpty() && line.length() == 12
-                            && line.matches("[0-9A-Fa-f]+")) {
-                        try {
-                            keys.add(line);
-                        } catch (OutOfMemoryError e) {
-                            // Error. Too many keys (out of memory).
-                            Toast.makeText(context, R.string.info_to_many_keys,
-                                    Toast.LENGTH_LONG).show();
-                            return -1;
-                        }
-                    }
-                }
-            }
-        }
+        keys.add("FFFFFFFFFFFF");
+        keys.add("EEEEEEEEEEEE");
+        keys.add(generateKDF(Common.getUID()));
+
+        //}
         if (!keys.isEmpty()) {
             mHasAllZeroKey = keys.contains("000000000000");
             mKeysWithOrder = new ArrayList<>(keys);
@@ -859,6 +855,47 @@ public class MCReader {
             return keys.size();
         }
         return 0;
+    }
+    /* s must be an even-length string. */
+    public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                + Character.digit(s.charAt(i+1), 16));
+        }
+        return data;
+    }
+
+    private static final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
+    public static String bytesToHex(byte[] bytes) {
+        byte[] hexChars = new byte[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new String(hexChars, StandardCharsets.UTF_8);
+    }
+    private String generateKDF(byte[] uid)  {
+        String uid_s = bytesToHex(uid);
+        byte[] plaintext = hexStringToByteArray(uid_s+uid_s+uid_s+uid_s);
+
+        SecretKey key = new SecretKeySpec("q3bu^t1nqfZ(pf$1".getBytes(),"AES"); //keygen.generateKey();
+
+        try {
+            Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            byte[] ciphertext = cipher.doFinal(plaintext);
+            byte[] iv = cipher.getIV();
+            Log.d("CFSRFID", "generateKDF: " + bytesToHex(Arrays.copyOfRange(ciphertext, 0,6)));
+            return bytesToHex(Arrays.copyOfRange(ciphertext, 0,6));
+        }
+        catch(Exception e){
+            return null;
+        }
+
+
     }
 
     /**
